@@ -38,20 +38,21 @@ int iszero(s21_decimal value) {
 }
 
 int isminus(s21_decimal value) {
-  return value.bits[3] >> 31;
+  return (value.bits[3] & MINUS) == MINUS;
 }
 
 void setminus(s21_decimal *value) {
-  value -> bits[3] | MINUS;
+  value -> bits[3] |= MINUS;
 }
 
 void setplus(s21_decimal *value) {
-  value -> bits[3] & NOTMINUS;
+  value -> bits[3] &= NOTMINUS;
 }
 
 int s21_negate(s21_decimal value, s21_decimal *result) {
   for (uint16_t i = 0; i < 3; ++i) result -> bits[i] = value.bits[i];
   result -> bits[3] = value.bits[3] ^ MINUS;
+  return 0;
 }
 
 uint64_t bitwithoutover(uint64_t bit) {
@@ -64,7 +65,7 @@ uint16_t getoverflow(uint64_t bit) {
 }
 
 uint64_t addolderbit(uint64_t smallerbit, uint64_t olderbit) {
-  return smallerbit + olderbit << 32;
+  return smallerbit + (olderbit << 32);
 }
 
 work_decimal convert2work(s21_decimal value) {
@@ -95,7 +96,7 @@ unsigned int bits10up(work_decimal *value) {
 unsigned int bits10down(work_decimal *value) {
   uint64_t remainder = 0;
   work_decimal foo = *value;
-  for (uint16_t i = 2; i >= 0; --i) {
+  for (int16_t i = 2; i >= 0; --i) {
     value -> bits[i] = addolderbit(foo.bits[i], remainder) / 10;
     remainder = addolderbit(foo.bits[i], remainder) % 10;
   }
@@ -121,7 +122,7 @@ unsigned int pointright(work_decimal *value, unsigned int *remainder) {
 }
 
 int pointequalize(work_decimal *value1, work_decimal *value2) {
-  int rounding = 0;
+  unsigned int rounding = 0;
   unsigned int overflow = 0;
   if (value1 -> exp != value2 -> exp) {
     int whoismax = (value1 -> exp > value2 -> exp) ? 1 : 2;
@@ -146,16 +147,45 @@ int pointequalize(work_decimal *value1, work_decimal *value2) {
 
 int normalize(work_decimal *value) {
   int error = getoverflow(value -> bits[0]) || getoverflow(value -> bits[1]) || getoverflow(value -> bits[2]);
-  if (error == 0) value -> exp > MAXEXP;
   if (error == 0 && value -> exp > 0) {
     work_decimal foo = *value;
     unsigned int remainder = 0;
     while (remainder == 0 && pointright(&foo, &remainder)) if (remainder == 0) *value = foo;
-  }
+  } else error = 1;
   return error;
 }
 
+s21_decimal set21(int bits3, int bits2, int bits1, int bits0) {
+  s21_decimal value;
+  value.bits[0] = bits0 & MAX4BIT;
+  value.bits[1] = bits1 & MAX4BIT;
+  value.bits[2] = bits2 & MAX4BIT;
+  value.bits[3] = bits3 & MAX4BIT;
+  return value;
+}
+
+void print_s21(s21_decimal value) {
+  for(int16_t i = 3; i >= 0; --i) printf("%x ", value.bits[i]);
+  printf("\n");
+}
+
+void print_work(work_decimal value) {
+  printf("exp = %u (%x) bits = ", value.exp, value.exp);
+  for(int16_t i = 2; i >= 0; --i) printf("%llx ", value.bits[i]);
+  printf("\n");
+}
+
 int main() {
-  printf("int = %libit; long int = %libit; long long int  = %libit.\n", sizeof(int), sizeof(long int), sizeof(long long int));
+/*   s21_decimal v0 = set21(MINUS, 0, 0, 0), v1 = set21(0x70000, 0 , 0, 0), v2 = set21(0x80110000, 1, 0, 0), v3 = set21(0, 0, -1, 0), v00, v11, v22, v33;
+  printf("%d\t%d\t%d\t%d\n", s21_negate(v0, &v00),  s21_negate(v1, &v11), s21_negate(v2, &v22), s21_negate(v3, &v33));
+  print_s21(v0); print_s21(v00);
+  print_s21(v1); print_s21(v11);
+  print_s21(v2); print_s21(v22);
+  print_s21(v3); print_s21(v33); */
+  uint64_t v0 = 0x238, v1 = 0x4797ff89, v2 = 0xffff758931;
+  printf("small+old=%llx, overflow = %x, small = %llx\n", addolderbit(v0, 2), getoverflow(addolderbit(v0, 2)), bitwithoutover(addolderbit(v0, 1)));
+  printf("small+old=%llx, overflow = %x, small = %llx\n", addolderbit(v1, 3), getoverflow(addolderbit(v1, 3)), bitwithoutover(addolderbit(v1, 3)));
+  printf("small+old=%llx, overflow = %x, small = %llx\n", addolderbit(v2, 30), getoverflow(addolderbit(v2, 30)), bitwithoutover(addolderbit(v2, 30)));
+  // printf("int = %libit; long int = %libit; long long int  = %libit.\n", sizeof(int), sizeof(long int), sizeof(long long int));
   return 0;
 }
