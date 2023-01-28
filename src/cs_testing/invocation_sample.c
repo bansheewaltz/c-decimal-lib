@@ -2,16 +2,15 @@
 #include <stdlib.h>
 
 int test() {
-  int a = 17;
-  int b = 7;
+  double a = 13;
+  double b = 7;
   char operation = '/';
-  double expected_result = (double)(17 / 7);
+  double expected_result = a / b;
 
-  char* filename = "./test_sample.txt";
-  FILE* file = fopen(filename, "w");
-  fprintf(file, "%i\n%c\n%i\n%lf\n", a, operation, b, expected_result);
-  fclose(file);
-  system("mono tester.exe");
+  char test_case[256] = "";
+  sprintf(test_case, "mono tester.exe %f %c %f %.28f",  //
+          a, operation, b, expected_result);
+  system(test_case);
 }
 
 int main() {

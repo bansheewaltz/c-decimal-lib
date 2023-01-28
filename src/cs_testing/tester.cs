@@ -7,13 +7,10 @@ namespace decimal_testing
     {
         static void Main(string[] args)
         {
-            string filename = @"./test_sample.txt";
-            StreamReader sr = File.OpenText(filename);
-
-            decimal a = Convert.ToDecimal(sr.ReadLine());
-            string operation = sr.ReadLine();
-            decimal b = Convert.ToDecimal(sr.ReadLine());
-            decimal expected_result = Convert.ToDecimal(sr.ReadLine());
+            decimal a = Convert.ToDecimal(args[0]);
+            string operation = args[1];
+            decimal b = Convert.ToDecimal(args[2]);
+            decimal expected_result = Convert.ToDecimal(args[3]);
 
             decimal result = 0;
             switch (operation)

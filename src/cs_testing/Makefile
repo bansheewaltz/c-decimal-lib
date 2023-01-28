@@ -1,7 +1,8 @@
-
 all: compile run
 
+# mono framework should be installed
 compile:
-	dotnet build
+	mcs tester.cs
+	gcc invocation_sample.c -o test
 run:
-	dotnet run
+	./test
