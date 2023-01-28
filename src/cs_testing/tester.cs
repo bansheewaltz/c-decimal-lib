@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 
 namespace decimal_testing
 {
@@ -6,10 +7,13 @@ namespace decimal_testing
     {
         static void Main(string[] args)
         {
-            decimal a = Convert.ToDecimal(Console.ReadLine());
-            string? operation = Console.ReadLine();
-            decimal b = Convert.ToDecimal(Console.ReadLine());
-            decimal expected_result = Convert.ToDecimal(Console.ReadLine());
+            string filename = @"./test_sample.txt";
+            StreamReader sr = File.OpenText(filename);
+
+            decimal a = Convert.ToDecimal(sr.ReadLine());
+            string operation = sr.ReadLine();
+            decimal b = Convert.ToDecimal(sr.ReadLine());
+            decimal expected_result = Convert.ToDecimal(sr.ReadLine());
 
             decimal result = 0;
             switch (operation)
@@ -34,8 +38,9 @@ namespace decimal_testing
             if (result != expected_result)
             {
                 Console.WriteLine("fail");
-                Console.WriteLine("result: {0} {1} {2} = {3}", a, operation, b, result);
-                Console.WriteLine("passed: {0} {1} {2} = {3}", a, operation, b, expected_result);
+                Console.WriteLine("test: {0} {1} {2}", a, operation, b);
+                Console.WriteLine("result: {0}", result);
+                Console.WriteLine("passed: {0}", expected_result);
             }
             else
             {
