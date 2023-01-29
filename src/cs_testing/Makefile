@@ -1,8 +1,15 @@
-all: compile run
+SRC := test_generator.cs
+EXE := $(SRC:%.cs=%.exe)
 
 # mono framework should be installed
+all: clean compile run
+clean:
+	rm -f $(EXE)
+	rm -f ./test_cases/*
 compile:
-	mcs tester.cs
-	gcc invocation_sample.c -o test
+	mcs $(SRC)
 run:
-	./test
+	mono $(EXE)
+
+style:
+	clang-format -style=Google -i *.cs
