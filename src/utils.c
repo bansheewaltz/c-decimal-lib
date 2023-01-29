@@ -97,11 +97,11 @@ int pointequalize(work_decimal *value1, work_decimal *value2) {
     int whoismax = (value1 -> exp > value2 -> exp) ? 1 : 2;
     work_decimal *max = (whoismax == 1) ? value1 : value2;
     work_decimal *min = (whoismax == 2) ?  value1 : value2;
-    uint16_t expdif = max -> exp - min -> exp;
+    int16_t expdif = max -> exp - min -> exp;
     for (; expdif > 0 && overflow == 0; --expdif) overflow = pointleft(min);
     if (overflow) {
       overflow  = 0;
-      for (; expdif > 0; --expdif) {
+      for (; expdif >= 0; --expdif) {
         pointright(max, &rounding);
         if (rounding) overflow = 1;
       }
