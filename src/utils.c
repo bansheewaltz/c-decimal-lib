@@ -192,6 +192,20 @@ work_decimal shiftleft(work_decimal value, uint16_t shift) {
   return res;
 }
 
+int checkoverflowmult(work_decimal res) {
+  int overflow = 1;
+  work_decimal foo = initwork();
+  foo.bits[0] = 1;
+  for (uint16_t i = 0; i < res.exp; ++i) bits10upe(&foo);
+  if (foo.bits[5] || foo.bits[4]) overflow = 0;
+  else {
+    overflow = !(res.bits[5] == 0 || foo.bits[3] > res.bits[5]);
+    overflow |= !(res.bits[4] == 0 || foo.bits[2] > res.bits[4]);
+    overflow |= !(res.bits[3] == 0 || foo.bits[1] > res.bits[3]);
+  }
+  return overflow;
+}
+
 s21_decimal set21(int bits3, int bits2, int bits1, int bits0) {
   s21_decimal value;
   value.bits[0] = bits0 & MAX4BIT;

@@ -85,8 +85,10 @@ void twos_complement_bits(work_decimal *value);
 // работает корректно, если value_1 > value_2
 work_decimal subbits(work_decimal value_1, work_decimal value_2);
 
-// возвращает побитвый сдвиг влево битов value на shift битов;
+// возвращает побитвый сдвиг влево битов value на shift битов
 work_decimal shiftleft(work_decimal value, uint16_t shift);
+// проверка переполнения при умножении
+int checkoverflowmult(work_decimal res);
 
 // возвращает децимал, записывая значения битов
 s21_decimal set21(int bits3, int bits2, int bits1, int bits0);
