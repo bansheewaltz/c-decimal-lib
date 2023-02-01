@@ -61,7 +61,7 @@ unsigned int bits10up(work_decimal *value) {
   if (overflow) *value = foo;
   return overflow;
 }
-
+/* 
 unsigned int pointleft(work_decimal *value) {
   unsigned int overflow = 0;
   if (value -> exp < MAXEXP) {
@@ -69,7 +69,7 @@ unsigned int pointleft(work_decimal *value) {
     else value -> exp += 1;
   } else overflow = 1;
   return overflow;
-}
+} */
 
 unsigned int bits10down(work_decimal *value) {
   uint64_t remainder = 0;
@@ -81,11 +81,19 @@ unsigned int bits10down(work_decimal *value) {
   return (unsigned int) remainder;
 }
 
+unsigned int addlast(work_decimal *value) {
+  unsigned int overflow = 0;
+    if (bits10up(value)) overflow = 1;
+    else value -> exp += 1;
+  return overflow;
+}
+
 unsigned int dellast(work_decimal *value) {
   value -> exp -= 1;
   return bits10down(value);
 }
 
+/* 
 unsigned int pointright(work_decimal *value, unsigned int *remainder) {
   unsigned int overflow = 0;
   if (value -> exp > 0) {
@@ -93,46 +101,103 @@ unsigned int pointright(work_decimal *value, unsigned int *remainder) {
     value -> exp -= 1;
   } else overflow = 1;
   return overflow;
-}
+} */
 
-int pointequalize(work_decimal *value1, work_decimal *value2) {
-  unsigned int rounding = NOTROUND;
+/* int pointequalize(work_decimal *value1, work_decimal *value2) {
+  unsigned int rounding = NOTROUND, overflow = 0, countround = 0;
+  if (value1 -> exp != value2 -> exp) {
+    int whoismax = (value1 -> exp > value2 -> exp) ? 1 : 2;
+    work_decimal *max = (whoismax == 1) ? value1 : value2;
+    work_decimal *min = (whoismax == 2) ?  value1 : value2;
+    int16_t expdif = max -> exp - min -> exp;
+    for (; expdif > 0 && overflow == 0; --expdif) overflow = addlast(min);
+    if (overflow) {
+      overflow  = 0;
+      for (; expdif >= 0; --expdif) {
+        rounding = dellast(max);
+        if (rounding) {
+          overflow = 1;
+          countround++;
+        }
+      }
+      if (overflow) {
+        if (rounding < 5) rounding = (whoismax == 1) ? FLOORFIRST : FLOORSECOND;
+        else if (rounding == 5) {
+          if (countround > 1) rounding = (whoismax == 1) ? CEILFIRST : CEILSECOND;
+          else {
+            if(max -> bits[0] & 1) rounding = (whoismax == 1) ? CEILFIRST : CEILSECOND;
+            else rounding = (whoismax == 1) ? FLOORFIRST : FLOORSECOND;
+          }
+        }
+        else rounding = (whoismax == 1) ? CEILFIRST : CEILSECOND;
+      }
+    }
+  }
+  return rounding;
+} */
+unsigned int pointequalize(work_decimal *value1, work_decimal *value2) {
   unsigned int overflow = 0;
   if (value1 -> exp != value2 -> exp) {
     int whoismax = (value1 -> exp > value2 -> exp) ? 1 : 2;
     work_decimal *max = (whoismax == 1) ? value1 : value2;
     work_decimal *min = (whoismax == 2) ?  value1 : value2;
     int16_t expdif = max -> exp - min -> exp;
-    for (; expdif > 0 && overflow == 0; --expdif) overflow = pointleft(min);
-    if (overflow) {
-      overflow  = 0;
-      for (; expdif >= 0; --expdif) {
-        pointright(max, &rounding);
-        if (rounding) overflow = 1;
-      }
-      if (overflow) {
-        if (rounding < 5) rounding = (whoismax == 1) ? FLOORFIRST : FLOORSECOND;
-        else rounding = (whoismax == 1) ? CEILFIRST : CEILSECOND;
-      }
-    }
+    for (; expdif > 0 && overflow == 0; --expdif) overflow = addlast(min);
   }
-  return rounding;
+  return overflow;
+}
+
+int bankround(work_decimal value, unsigned int remander, unsigned int countround) {
+  int roundup = 0;
+  if (remander > 5) roundup = 1;
+  else if (remander == 5) {
+    if (countround > 1) roundup = 1;
+    else if (!(value.bits[0] & 1)) roundup = 1;
+  }
+  return roundup;
+}
+
+int needdown(work_decimal value) {
+  int need = 0;
+    for (uint16_t i = 3; i < WORKBITS; ++i) need |= (value.bits[i] != 0);
+    if (need == 0) need = value.exp > MAXEXP;
+  return need;
 }
 
 int normalize(work_decimal *value) {
-  int error = getoverflow(value -> bits[0]) || getoverflow(value -> bits[1]) || getoverflow(value -> bits[2]) || value ->exp > MAXEXP;
-  if (error == 0 && value -> exp > 0) {
+  int overflow = 0;
+  unsigned int remainder = 0, countround = 0;
+  for (int16_t i = 0; i < WORKBITS - 1; ++i) {
+      value -> bits[i + 1] += getoverflow(value -> bits[i]);
+      value -> bits[i] = bitwithoutover(value -> bits[i]);
+  }
+  while (needdown(*value) && value -> exp > 0) {
+    remainder = dellast(value);
+    if (remainder) countround++;
+  }
+  if (bankround(*value, remainder, countround)) {
+    if(addnum(value, 1)) overflow = 1;
+    if (needdown(*value)) {
+      if (value -> exp > 0) {
+        dellast(value);
+        addnum(value, 1);
+      } else overflow = 1;
+    }
+  }
+  if (value -> exp > 0 && overflow == 0) {
     work_decimal foo = *value;
     int doing = 1;
+    remainder = 0;
     while (doing) {
-      int overflow = 0;
-      unsigned int remainder = 0;
-      overflow = pointright(&foo, &remainder);
-      if (overflow == 0 && remainder == 0) *value = foo;
-      else doing = 0;
+      if(value -> exp > 0) {
+        remainder = dellast(&foo);
+        if (remainder == 0) *value = foo;
+        else doing = 0;
       }
+      else doing = 0;
+    }
   }
-  return error;
+  return overflow;
 }
 
 int compearbits(work_decimal value_1, work_decimal value_2) {
@@ -191,7 +256,7 @@ work_decimal shiftleft(work_decimal value, uint16_t shift) {
   for (int16_t i = WORKBITS - 1; i >= 0; --i) res.bits[i] = bitwithoutover(res.bits[i]);
   return res;
 }
-
+/* 
 int checkoverflowmult(work_decimal res) {
   int overflow = 1;
   work_decimal foo = initwork();
@@ -204,7 +269,7 @@ int checkoverflowmult(work_decimal res) {
     overflow |= !(res.bits[3] == 0 || foo.bits[1] > res.bits[3]);
   }
   return overflow;
-}
+} */
 
 s21_decimal set21(int bits3, int bits2, int bits1, int bits0) {
   s21_decimal value;

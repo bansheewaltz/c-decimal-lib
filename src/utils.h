@@ -8,13 +8,6 @@
 #define NOTMINUS 0x7fffffff
 #define WORKBITS 6
 
-// для pointequalize
-#define FLOORFIRST -1 //  первая величина округлена в меньшую сторону
-#define FLOORSECOND -2 //  вторая величина округлена в меньшую сторону
-#define CEILFIRST 1 //  первая величина округлена в большую сторону
-#define CEILSECOND 2 //  вторая величина округлена в большую сторону
-#define NOTROUND 0  //  величины не округлены
-
 typedef struct
 {
   uint64_t bits[WORKBITS];
@@ -44,28 +37,29 @@ uint64_t bitwithoutover(uint64_t bit);
 // если при умножении будет переполнение, то значение не поменяется,
 // а функция вернёт 1.
 unsigned int bits10up(work_decimal *value);
-// если возможно, приписывает дополнительный ноль после запятой, т.е.
-// умножает битовую часть на 10 и увеличивает степень на 1.
-// если не возможно, то значение не меняется, вернёт 1.
-unsigned int pointleft(work_decimal *value);
-
 // делит битовую часть на 10, степень не трогает.
 // возвращает остаток от деления
 unsigned int bits10down(work_decimal *value);
+// если возможно, приписывает дополнительный ноль после запятой, т.е.
+// умножает битовую часть на 10 и увеличивает степень на 1.
+// если не возможно, то значение не меняется, вернёт 1.
+unsigned int addlast(work_decimal *value);
 // убирает последнюю цифру после запятой без проверки степени, т.е.
 // делит битовую часть на 10 и уменьшает степень на 1.
 // возвращает удалённую цифру
 unsigned int dellast(work_decimal *value);
-// убирает последнюю цифру value после запятой с проверкой степени
-// удаленная цифра сохраняется в remainder
-// если после запятой нет цифр (степень 0), вернёт 1 и значения не изменятся
-unsigned int pointright(work_decimal *value, unsigned int *remainder);
 
-// делает value1 и мфдгу 2 с одинаковым количеством знаков после запятой
-// возвращает какая из величин при этом была округлена
-int pointequalize(work_decimal *value1, work_decimal *value2);
 
-// удаляет лишние нули после запятой у value
+// делает value1 и value2 с одинаковым количеством знаков после запятой
+// возвращает ошибку, если это не возможно
+unsigned int pointequalize(work_decimal *value1, work_decimal *value2);
+
+// возвращает 1 если нужно ли округлять вверх  value по правилам банковского округления
+// получает последнее отброшенное число remander и количество отброшеных не нулевых цифр countround
+int bankround(work_decimal value, unsigned int remander, unsigned int countround);
+// возвращает 1 если  value нужно и можно отбросить справа цифру после запятой
+int needdown(work_decimal value);
+// приводит bits и exp у value в правильный вид и затем удаляет лишние нули после запятой у value
 // возвращает 1 если value содержит переполнение или большую степень
 int normalize(work_decimal *value);
 
@@ -87,14 +81,13 @@ work_decimal subbits(work_decimal value_1, work_decimal value_2);
 
 // возвращает побитвый сдвиг влево битов value на shift битов
 work_decimal shiftleft(work_decimal value, uint16_t shift);
-// проверка переполнения при умножении
-int checkoverflowmult(work_decimal res);
 
 // возвращает децимал, записывая значения битов
 s21_decimal set21(int bits3, int bits2, int bits1, int bits0);
 // возвращает рабочий децимал заполненый нулями
 work_decimal initwork();
 
+// НИЖЕ ФУНКЦИИ ДЛЯ ТЕСТИРОВАНИЯ ПЕРЕД СДАЧЕЙ БУДУТ УДАЛЕНЫ
 // печатет децимал. bits[3] всегда в hex,
 // остальные при type = 0 в hex, иначе десятичный
 void print_s21(s21_decimal value, int type);
