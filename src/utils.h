@@ -81,6 +81,13 @@ work_decimal subbits(work_decimal value_1, work_decimal value_2);
 
 // возвращает побитвый сдвиг влево битов value на shift битов
 work_decimal shiftleft(work_decimal value, uint16_t shift);
+// делит биты v_1 на биты v_2 нацело, возвращает остаток, результат деления в res
+work_decimal divmain(work_decimal v_1, work_decimal v_2, work_decimal *res);
+// делит биты v_1 на биты v_2 нацело, возвращает остаток
+work_decimal divremain(work_decimal v_1, work_decimal v_2);
+// дописывает дробную часть в res деления битов v_1 на v_2 (v1 < v2) 
+// в количестве MAXEXP + 1 знаков после запятой
+void divtail(work_decimal v_1, work_decimal v_2, work_decimal *res);
 
 // возвращает децимал, записывая значения битов
 s21_decimal set21(int bits3, int bits2, int bits1, int bits0);

@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #include "utils.h"
 
@@ -47,9 +46,9 @@ uint64_t getoverflow(uint64_t bit) {
   return bit >> 32;
 }
 
-/* uint64_t addolderbit(uint64_t smallerbit, uint64_t olderbit) {
+uint64_t addolderbit(uint64_t smallerbit, uint64_t olderbit) {
   return smallerbit + (olderbit << 32);
-} */
+}
 
 unsigned int bits10up(work_decimal *value) {
   unsigned int overflow = 0;
@@ -236,7 +235,7 @@ void twos_complement_bits(work_decimal *value) {
     value -> bits[i] = ~value -> bits[i];
     value -> bits[i] &= MAX4BIT;
   }
-  add1(value);
+  addnum(value, 1);
 }
 
 work_decimal subbits(work_decimal value_1, work_decimal value_2) {
@@ -247,7 +246,7 @@ work_decimal subbits(work_decimal value_1, work_decimal value_2) {
 }
 
 work_decimal shiftleft(work_decimal value, uint16_t shift) {
-  work_decimal res; res.exp = 0;
+  work_decimal res = initwork();
   uint16_t numbits = shift / 32;
   shift %= 32;
   for (int16_t i = WORKBITS - 1; i >= numbits; --i) res.bits[i] = value.bits[i - numbits];
@@ -256,6 +255,65 @@ work_decimal shiftleft(work_decimal value, uint16_t shift) {
   for (int16_t i = WORKBITS - 1; i >= 0; --i) res.bits[i] = bitwithoutover(res.bits[i]);
   return res;
 }
+
+work_decimal divmain(work_decimal v_1, work_decimal v_2, work_decimal *res) {
+  res -> exp = 0;
+  for (int16_t i = 2; i >= 0; --i) {
+    for (int16_t j = 31; j >= 0; --j) {
+      work_decimal foo = shiftleft(v_2, i * 32 + j);
+      int compear = compearbits(v_1, foo);
+      if (compear >= 0) {
+        res -> bits[i] += (uint64_t)1 << j;
+        v_1 = subbits(v_1, foo);
+        if (compear == 0) {
+          j = -1; i = -1;
+        }
+      }
+    }
+  }
+  return v_1;
+}
+
+work_decimal divremain(work_decimal v_1, work_decimal v_2) {
+  for (int16_t i = 2; i >= 0; --i) {
+    for (int16_t j = 31; j >= 0; --j) {
+      work_decimal foo = shiftleft(v_2, i * 32 + j);
+      int compear = compearbits(v_1, foo);
+      if (compear >= 0) {
+        v_1 = subbits(v_1, foo);
+        if (compear == 0) {
+          j = -1; i = -1;
+        }
+      }
+    }
+  }
+  return v_1;
+}
+
+void divtail(work_decimal v_1, work_decimal v_2, work_decimal *res) {
+  unsigned int stop = 0;
+  for (uint16_t i = 0; i < MAXEXP + 1 && stop == 0; ++i) {
+    stop = bits10up(&res);
+    if (stop == 0) {
+      res -> exp += 1;
+      bits10up(&v_1);
+      uint16_t add = 0;
+      for (int16_t j = 3; j >= 0; --j) {
+        work_decimal foo = shiftleft(v_2, j);
+        int compear = compearbits(v_1, foo);
+        if (compear >=0) {
+          add += (uint64_t)1 << j;
+          v_1 = subbits(v_1, foo);
+          if (compear == 0) {
+            j = -1; stop = 1;
+          }
+        }
+      }
+      addnum(res, add);
+    }
+  }
+}
+
 /* 
 int checkoverflowmult(work_decimal res) {
   int overflow = 1;
@@ -303,5 +361,5 @@ void print_work(work_decimal value, int type) {
   if (type == 0) for(int16_t i = WORKBITS - 1; i >= 0; --i) printf("%llx ", value.bits[i]);
   else for(int16_t i = WORKBITS - 1; i >= 0; --i) printf("%llu ", value.bits[i]);
 #endif
-  printf("\n");
+  printf("\t");
 }
