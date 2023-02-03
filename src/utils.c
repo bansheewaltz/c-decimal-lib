@@ -274,6 +274,18 @@ work_decimal divmain(work_decimal v_1, work_decimal v_2, work_decimal *res) {
   return v_1;
 }
 
+/* uint16_t getfirstbit(work_decimal value) {
+  uint16_t count = WORKBITS - 1;
+  for (; value.bits[count] == 0 && count > 0; --count);
+  for (int16_t i = 31; i > 0; --i) {
+    if (value.bits[count] >=  (uint32_t)1 << i) {
+      count = count * 32 + i;
+      i = 0;
+    }
+  }
+  return count;
+} */
+
 work_decimal divremain(work_decimal v_1, work_decimal v_2) {
   for (int16_t i = 2; i >= 0; --i) {
     for (int16_t j = 31; j >= 0; --j) {
@@ -293,7 +305,7 @@ work_decimal divremain(work_decimal v_1, work_decimal v_2) {
 void divtail(work_decimal v_1, work_decimal v_2, work_decimal *res) {
   unsigned int stop = 0;
   for (uint16_t i = 0; i < MAXEXP + 1 && stop == 0; ++i) {
-    stop = bits10up(&res);
+    stop = bits10up(res);
     if (stop == 0) {
       res -> exp += 1;
       bits10up(&v_1);
