@@ -6,10 +6,6 @@
 
 #define MAXEXP 28
 #define MAX2BIT 0xffff
-#define MAX4BIT 0xffffffff
-#define MINUS 0x80000000
-#define NOTMINUS 0x7fffffff
-#define WORKBITS 6
 
 #if UINT_MAX > MAX2BIT
 typedef struct {
@@ -21,10 +17,10 @@ typedef struct {
 } s21_decimal;
 #endif
 
-typedef struct {
-  uint64_t bits[WORKBITS];
-  uint16_t exp;
-} work_decimal;
+// typedef struct {
+//   uint64_t bits[WORKBITS];
+//   uint16_t exp;
+// } work_decimal;
 
 int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
 int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);

@@ -1,18 +1,32 @@
-SRC := test_generator.cs
+SRC := test.cs
+SRC := test.cs
 EXE := $(SRC:%.cs=%.exe)
-LDFLAGS = -D_THREAD_SAFE -I/opt/homebrew/Cellar/check/0.15.2/include \
-		      	  -L/opt/homebrew/Cellar/check/0.15.2/lib -lcheck
+TST := test_cases
+LDFLAGS := $(shell pkg-config --cflags --libs check)
+RM := rm -rf
+CLS := printf "\033c"
 
 # mono framework should be installed
 all: clean compile run
 clean:
-	rm -f $(EXE)
-	rm -f ./test_cases/*
+	@$(RM) *.exe
+	@$(RM) $(TST)
 compile:
-	mkdir -p test_cases
-	mcs $(SRC)
+	@mkdir -p $(TST)
+	@mcs $(SRC)
 run:
-	mono $(EXE)
+	@mkdir -p test_cases
+	@mono $(EXE)
 
 style:
-	clang-format -style=Google -i *.cs
+	clang-format -style=Google -i *.{c,cs}
+
+
+FNAME := mod
+checkmk:
+	checkmk clean_mode=1 $(FNAME)_test.check > $(FNAME)_test.c
+	@$(MAKE) style
+check: checkmk
+	$(CLS)
+	gcc $(LDFLAGS) -o $(FNAME) $(FNAME).c $(FNAME)_test.c ../utils.c
+	@./$(FNAME)

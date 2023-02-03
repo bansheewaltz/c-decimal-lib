@@ -1,0 +1,33 @@
+#include "../utils.h"
+#include <stdio.h>
+#include <stdint.h>
+
+#define PATH "./test_cases/negate.bin"
+
+#define NUMBER_OF_TESTS 50
+#define DEC_PER_RECORD 2
+#define SIZE_IN_BYTES 16
+#define SIZE_IN_INTS 4
+#define BUFFER_SIZE (DEC_PER_RECORD * NUMBER_OF_TESTS)
+#define STEP (SIZE_IN_INTS * DEC_PER_RECORD)
+
+
+FILE* file;
+s21_decimal a;
+s21_decimal res;
+s21_decimal cs_res;
+s21_decimal buffer[BUFFER_SIZE];
+
+#suite negate
+#test-loop(0, 50) iterate
+    memcpy(&a, buffer + _i * DEC_PER_RECORD, SIZE_IN_BYTES);
+    memcpy(&cs_res, buffer + _i * DEC_PER_RECORD + 1, SIZE_IN_BYTES);
+    s21_negate(a, &res);
+    ck_assert_mem_eq(&res, &cs_res, SIZE_IN_BYTES);
+    
+#main-pre
+    file = fopen(PATH, "rb");
+    fread(buffer, BUFFER_SIZE, sizeof(s21_decimal), file);
+
+#main-post
+    fclose(file);

@@ -1,0 +1,39 @@
+#include "../utils.h"
+#include <stdio.h>
+#include <stdint.h>
+
+#define NUMBER_OF_TESTS 443
+#define DEC_PER_RECORD 2
+#define DEC_IN_BYTES 16
+#define SIZE_IN_INTS 4
+#define BUFFER_SIZE (NUMBER_OF_TESTS * DEC_PER_RECORD * SIZE_IN_INTS) 
+#define STEP (SIZE_IN_INTS * DEC_PER_RECORD)
+
+
+FILE* file;
+s21_decimal a;
+s21_decimal b;
+s21_decimal res;
+s21_decimal cs_res;
+int cs_ret;
+int ret;
+int buffer[13];
+//void vbuffer;
+
+#suite mod
+#test-loop(1, 443) iterate
+    fread(buffer, 52, 1, file);
+    memcpy(&a, buffer, DEC_IN_BYTES);
+    memcpy(&b, (void *)buffer + 16, DEC_IN_BYTES);
+    memcpy(&cs_ret, (void *)buffer + 32, 4);
+    memcpy(&cs_res, (void *)buffer + 36, DEC_IN_BYTES);
+    ret = s21_mod(a, b, &res);
+    ck_assert_int_eq(ret, cs_ret);
+    ck_assert_mem_eq(&res, &cs_res, DEC_IN_BYTES);
+    
+#main-pre
+    void *vbuffer = (void *)buffer;
+    file = fopen("./test_cases/mod.bin", "rb");
+
+#main-post
+    fclose(file);
