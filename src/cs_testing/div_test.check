@@ -1,0 +1,48 @@
+#include "../utils.h"
+#include <stdio.h>
+#include <stdint.h>
+#define DEC_IN_BYTES sizeof(s21_decimal)
+#define INT_IN_BYTES sizeof(int32_t)
+#define DEC_IN_INTS (DEC_IN_BYTES/INT_IN_BYTES)
+
+/* changable variables*/
+#define FILE_PATH "./test_cases/div.bin"
+#define NUMBER_OF_TESTS 441
+#define RECORD_SIZE_BYTES (3 * DEC_IN_BYTES + 1 * INT_IN_BYTES)
+#define BUFFER_SIZE_BYTES (RECORD_SIZE_BYTES * NUMBER_OF_TESTS)
+
+
+char buffer[BUFFER_SIZE_BYTES];
+FILE* file_ptr;
+s21_decimal a;
+s21_decimal b;
+s21_decimal res;
+s21_decimal cs_res;
+int32_t ret;
+int32_t cs_ret;
+
+#suite div
+#test-loop(0, 441) iterate_file
+    memcpy(&a, buffer + _i * RECORD_SIZE_BYTES, 16);
+    memcpy(&b, buffer + _i * RECORD_SIZE_BYTES + 16, 16);
+    memcpy(&cs_ret, buffer + _i * RECORD_SIZE_BYTES + 16 * 2, 4);
+    memcpy(&cs_res, buffer + _i * RECORD_SIZE_BYTES + 16 * 2 + 4, 16);
+    ret = s21_div(a, b, &res);
+
+    ck_assert_int_eq(ret, cs_ret);
+    // consider changing result variable binary form in accordance to C#
+    if (ret == 0){
+        ck_assert_mem_eq(&res, &cs_res, DEC_IN_BYTES);
+    }
+
+
+#main-pre
+    file_ptr = fopen(FILE_PATH, "rb");
+    if (file_ptr == NULL){
+        fprintf(stderr, "tester: No such file or directory: %s\n", FILE_PATH);
+        return 1;
+    }
+    fread(buffer, BUFFER_SIZE_BYTES, 1, file_ptr);
+
+#main-post
+    fclose(file_ptr);

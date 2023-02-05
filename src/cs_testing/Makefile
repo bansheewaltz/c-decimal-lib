@@ -7,26 +7,22 @@ RM := rm -rf
 CLS := printf "\033c"
 
 # mono framework should be installed
-all: clean compile run
+all: clean generate
 clean:
-	@$(RM) *.exe
-	@$(RM) $(TST)
-compile:
-	@mkdir -p $(TST)
+	@$(RM) *.exe *_test *_test.c
+generate:
 	@mcs $(SRC)
-run:
-	@mkdir -p test_cases
 	@mono $(EXE)
 
 style:
 	clang-format -style=Google -i *.{c,cs}
 
 
-FNAME := mod
+FNAME := mul
 checkmk:
 	checkmk clean_mode=1 $(FNAME)_test.check > $(FNAME)_test.c
 	@$(MAKE) style
 check: checkmk
 	$(CLS)
-	gcc $(LDFLAGS) -o $(FNAME) $(FNAME).c $(FNAME)_test.c ../utils.c
-	@./$(FNAME)
+	@gcc $(LDFLAGS) -o $(FNAME)_test s21_$(FNAME).c $(FNAME)_test.c ../utils.c
+	time ./$(FNAME)_test

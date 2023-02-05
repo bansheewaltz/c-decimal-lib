@@ -7,19 +7,34 @@ using static Generator;
 
 static class Tester {
   public static string tests_path = "./test_cases";
+  public static string tests_txt_path = "./test_cases/txt";
   public static int n_unary_op_cases = 50;
   static void Main() {
-    // SimpleTest.mod();
+    Directory.CreateDirectory(tests_txt_path);
     ConversionSample.print();
+    // SimpleTest.mod();
 
-    // CommutativeBinaryOpTests("mul");
-    // CommutativeBinaryOpTests("add");
-    // NCommutativeBinaryOpTests("sub");
-    // NCommutativeBinaryOpTests("div");
-    NCommutativeBinaryOpTests("mod");
+    /* arithmetic operations */
+    Tester.CommutativeBinaryOpResults("add");
+    Tester.CommutativeBinaryOpResults("mul");
+    Tester.NCommutativeBinaryOpResults("sub");
+    Tester.NCommutativeBinaryOpResults("div");
+    Tester.NCommutativeBinaryOpResults("mod");
+    /* comparison operations */
+    Tester.ComparisonOpResults("is_less");
+    Tester.ComparisonOpResults("is_less_or_equal");
+    Tester.ComparisonOpResults("is_greater");
+    Tester.ComparisonOpResults("is_greater_or_equal");
+    Tester.ComparisonOpResults("is_equal");
+    Tester.ComparisonOpResults("is_not_equal");
+    // /* convertors and parsers */
 
-    Generator.AddGeneratedUnaryOpCases();
-    UnaryOpTests("negate");
+    Generator.SetNumOfUnaryOpCases();
+    // /* another functions */
+    Tester.UnaryOpResults("negate");
+    Tester.UnaryOpResults("truncate");
+    Tester.UnaryOpResults("round");
+    Tester.UnaryOpResults("floor");
   }
   public static List<decimal> cases = new List<decimal>() {
     0m,
@@ -47,8 +62,19 @@ static class Tester {
   public static int cases_n = cases.Count;
 
   static void write_binary_op_header(StreamWriter dw) {
-    dw.WriteLine($"{"a",16}{"|",17}{"b", 17}{"|",17}{"result", 19}{"|",15}{"return code", 12}");
-    var f1 = String.Concat(Enumerable.Repeat("-", 113));
+    dw.WriteLine(
+        $"{" n "}|{"a",16}{"|",18}{"b", 17}{"|",17}{"result", 19}{"|",15}{"ret", 3}|{"result in hex",25}");
+    var f1 = String.Concat(Enumerable.Repeat("-", 147));
+    dw.WriteLine("{0}", f1);
+  }
+  static void write_comparison_op_header(StreamWriter dw) {
+    dw.WriteLine($"{" n "}|{"a",16}{"|",16}op|{"b", 17}{"|",16}{"ret", 3}");
+    var f1 = String.Concat(Enumerable.Repeat("-", 75));
+    dw.WriteLine("{0}", f1);
+  }
+  static void write_others_op_header(StreamWriter dw) {
+    dw.WriteLine($"{" n "}|{"a",16}{"|",16}function|{"result", 16}{"|",15}{"ret", 3}");
+    var f1 = String.Concat(Enumerable.Repeat("-", 79));
     dw.WriteLine("{0}", f1);
   }
 
@@ -56,16 +82,19 @@ static class Tester {
     return Math.Sign(a) == Math.Sign(b);
   }
 
-  static void CommutativeBinaryOpTests(string op) {
+  static void CommutativeBinaryOpResults(string op) {
+    string path = $"{tests_txt_path}/arithmetics/";
+    Directory.CreateDirectory(path);
     var bw = new BinaryWriter(File.Open($"{tests_path}/{op}.bin", FileMode.Create));
-    var dw = new StreamWriter(File.Open($"{tests_path}/{op}.txt", FileMode.Create));
+    var dw = new StreamWriter(File.Open($"{path}/{op}.txt", FileMode.Create));
     write_binary_op_header(dw);
     decimal a, b, res = decimal.Zero;
     string sres, symbol = "?";
     Int32 code;
+    int n = 0;
 
     for (int i = 0; i < cases_n; ++i) {
-      for (int j = i; j < cases_n; ++j) {
+      for (int j = i; j < cases_n; ++j, n++) {
         a = cases[i];
         b = cases[j];
 
@@ -80,7 +109,7 @@ static class Tester {
               res = a * b;
               break;
             default:
-              Console.WriteLine("Incorrect function \"CommutativeBinaryOpTests\" input");
+              Console.WriteLine("Incorrect function \"CommutativeBinaryOpResults\" input");
               System.Environment.Exit(1);
               break;
           }
@@ -100,22 +129,27 @@ static class Tester {
         bw.Write(b);
         bw.Write(code);
         bw.Write(res);
-        dw.WriteLine($"{a,31} {symbol} {b,31} = {sres,31} | {code}");
+        int[] bits = decimal.GetBits(res);
+        dw.WriteLine("{9,3}| {0,31} {1} {2,31} = {3,31} | {4} | {5:X8} {6:X8} {7:X8} {8:X9}",  //
+                     a, symbol, b, sres, code, bits[3], bits[2], bits[1], bits[0], n);
       }
     }
     bw.Close();
     dw.Close();
   }
-  static void NCommutativeBinaryOpTests(string op) {
+  static void NCommutativeBinaryOpResults(string op) {
+    string path = $"{tests_txt_path}/arithmetics/";
+    Directory.CreateDirectory(path);
     var bw = new BinaryWriter(File.Open($"{tests_path}/{op}.bin", FileMode.Create));
-    var dw = new StreamWriter(File.Open($"{tests_path}/{op}.txt", FileMode.Create));
+    var dw = new StreamWriter(File.Open($"{path}/{op}.txt", FileMode.Create));
     write_binary_op_header(dw);
     decimal a, b, res = decimal.Zero;
     string sres, symbol = "?";
     Int32 code;
+    int n = 0;
 
     for (int i = 0; i < cases_n; ++i) {
-      for (int j = 0; j < cases_n; ++j) {
+      for (int j = 0; j < cases_n; ++j, ++n) {
         a = cases[i];
         b = cases[j];
 
@@ -134,7 +168,7 @@ static class Tester {
               res = a % b;
               break;
             default:
-              Console.WriteLine("Incorrect function \"NCommutativeBinaryOpTests\" input");
+              Console.WriteLine("Incorrect function \"NCommutativeBinaryOpResults\" input");
               System.Environment.Exit(1);
               break;
           }
@@ -144,7 +178,8 @@ static class Tester {
           code = 3;
           sres = "NaN";
         } catch {
-          if (SignIsEqual(a, b) && Math.Sign(a) == 1) {
+          if (op == "sub" && !SignIsEqual(a, b) && Math.Sign(b) == -1 ||  //
+              op != "sub" && SignIsEqual(a, b)) {
             code = 1;
             sres = "+inf";
           } else {
@@ -156,24 +191,105 @@ static class Tester {
         bw.Write(b);
         bw.Write(code);
         bw.Write(res);
-        dw.WriteLine($"{a,31} {symbol} {b,31} = {sres,31} | {code}");
+        int[] bits = decimal.GetBits(res);
+        dw.WriteLine("{9,3}| {0,31} {1} {2,31} = {3,31} | {4} | {5:X8} {6:X8} {7:X8} {8:X9}",  //
+                     a, symbol, b, sres, code, bits[3], bits[2], bits[1], bits[0], n);
       }
     }
     bw.Close();
     dw.Close();
   }
-  static void UnaryOpTests(string op) {
+  static void ComparisonOpResults(string op) {
+    string path = $"{tests_txt_path}/comparisons/";
+    Directory.CreateDirectory(path);
     var bw = new BinaryWriter(File.Open($"{tests_path}/{op}.bin", FileMode.Create));
-    var dw = new StreamWriter(File.Open($"{tests_path}/{op}.txt", FileMode.Create));
+    var dw = new StreamWriter(File.Open($"{path}/{op}.txt", FileMode.Create));
+    write_comparison_op_header(dw);
+    decimal a, b;
+    string symbol = "?";
+    Int32 return_value;
+    int n = 0;
+
+    for (int i = 0; i < cases_n; ++i) {
+      for (int j = 0; j < cases_n; ++j, ++n) {
+        a = cases[i];
+        b = cases[j];
+
+        switch (op) {
+          case "is_less":
+            symbol = "<";
+            return_value = Convert.ToInt32(a < b);
+            break;
+          case "is_less_or_equal":
+            symbol = "<=";
+            return_value = Convert.ToInt32(a <= b);
+            break;
+          case "is_greater":
+            symbol = ">";
+            return_value = Convert.ToInt32(a > b);
+            break;
+          case "is_greater_or_equal":
+            symbol = ">=";
+            return_value = Convert.ToInt32(a >= b);
+            break;
+          case "is_equal":
+            symbol = "==";
+            return_value = Convert.ToInt32(a == b);
+            break;
+          case "is_not_equal":
+            symbol = "!=";
+            return_value = Convert.ToInt32(a != b);
+            break;
+          default:
+            Console.WriteLine($"Incorrect function \"ComparionsOps\" input: {op}");
+            System.Environment.Exit(1);
+            break;
+        }
+        return_value = 0;
+
+        bw.Write(a);
+        bw.Write(b);
+        bw.Write(return_value);
+        dw.WriteLine($"{n,3}|{a,31} {symbol,2} {b,31} | {return_value}");
+      }
+    }
+    bw.Close();
+    dw.Close();
+  }
+  static void UnaryOpResults(string op) {
+    string path = $"{tests_txt_path}/others/";
+    Directory.CreateDirectory(path);
+    var bw = new BinaryWriter(File.Open($"{tests_path}/{op}.bin", FileMode.Create));
+    var dw = new StreamWriter(File.Open($"{path}/{op}.txt", FileMode.Create));
+    write_others_op_header(dw);
     decimal a, res = decimal.Zero;
+    Int32 ret;
+    int n = 0;
 
-    for (int i = 0; i < n_unary_op_cases; ++i) {
+    for (int i = 0; i < n_unary_op_cases; ++i, ++n) {
       a = unary_cases[i];
-      res = decimal.Negate(a);
-
+      switch (op) {
+        case "negate":
+          res = decimal.Negate(a);
+          break;
+        case "truncate":
+          res = decimal.Truncate(a);
+          break;
+        case "round":
+          res = decimal.Round(a);
+          break;
+        case "floor":
+          res = decimal.Floor(a);
+          break;
+        default:
+          Console.WriteLine("Incorrect function \"UnaryOpResults\" input");
+          System.Environment.Exit(1);
+          break;
+      }
+      ret = 1;
       bw.Write(a);
       bw.Write(res);
-      dw.WriteLine($"{a,31} {op} {res,31}");
+      dw.WriteLine($"{n,3}|{a,31} {op} {res,30}|{ret,2}");
     }
     bw.Close();
     dw.Close();
@@ -182,7 +298,7 @@ static class Tester {
 
 public static class ConversionSample {
   public static void print() {
-    string path = $"{Tester.tests_path}/conversion_sample.txt";
+    string path = $"{Tester.tests_txt_path}/conversion_sample.txt";
     var sw = new StreamWriter(File.Open(path, FileMode.Create));
 
     Decimal[] values = { Decimal.Zero,
@@ -235,7 +351,8 @@ public static class ConversionSample {
       int[] bits = decimal.GetBits(value);
       sw.WriteLine(
           "{0,31}  {1,10:X8}{2,10:X8}{3,10:X8}{4,10:X8}    {5,-34}{6,-34}{7,-34}{8,-34}  {9,-31}",
-          value, bits[3], bits[2], bits[1], bits[0], Convert.ToString(bits[3], 2).PadLeft(32, '0'),
+          value, bits[3], bits[2], bits[1], bits[0],  //
+          Convert.ToString(bits[3], 2).PadLeft(32, '0'),
           Convert.ToString(bits[2], 2).PadLeft(32, '0'),
           Convert.ToString(bits[1], 2).PadLeft(32, '0'),
           Convert.ToString(bits[0], 2).PadLeft(32, '0'), value);
@@ -268,7 +385,7 @@ public static class Generator {
 
   public static List<decimal> unary_cases = new List<decimal>(Tester.cases);
 
-  public static void AddGeneratedUnaryOpCases() {
+  public static void SetNumOfUnaryOpCases() {
     Random rnd = new Random();
     for (int i = 0; i + Tester.cases_n < Tester.n_unary_op_cases; ++i) {
       unary_cases.Add(rnd.NextDecimal());
@@ -283,14 +400,14 @@ static class SimpleTest {
       Tuple.Create(-7m, 3m),
       Tuple.Create(7m, -3m),
       Tuple.Create(-7m, -3m),
-      Tuple.Create(18446744069414584320m, 000000000000000009m),
-      Tuple.Create(-18446744069414584320m, 000000000000000009m),
+      Tuple.Create(18446744069414584320m, 0.00000000000000009m),
+      Tuple.Create(-18446744069414584320m, 0.00000000000000009m),
     };
     decimal a, b;
     for (int i = 0; i < cases.Length; ++i) {
       a = cases[i].Item1;
       b = cases[i].Item2;
-      Console.WriteLine($"test: {a} % {b} = {1}", a % b);
+      Console.WriteLine($"test: {a} % {b} = {a % b}");
     }
   }
 }
