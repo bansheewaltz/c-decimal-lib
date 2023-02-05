@@ -130,7 +130,7 @@ static class Tester {
         bw.Write(code);
         bw.Write(res);
         int[] bits = decimal.GetBits(res);
-        dw.WriteLine("{9,3}| {0,31} {1} {2,31} = {3,31} | {4} | {5:X8} {6:X8} {7:X8} {8:X9}",  //
+        dw.WriteLine("{9,3}| {0,31} {1} {2,31} = {3,31} | {4} | {5:X8} {6:X8} {7:X8} {8:X8}",  //
                      a, symbol, b, sres, code, bits[3], bits[2], bits[1], bits[0], n);
       }
     }
@@ -192,7 +192,7 @@ static class Tester {
         bw.Write(code);
         bw.Write(res);
         int[] bits = decimal.GetBits(res);
-        dw.WriteLine("{9,3}| {0,31} {1} {2,31} = {3,31} | {4} | {5:X8} {6:X8} {7:X8} {8:X9}",  //
+        dw.WriteLine("{9,3}| {0,31} {1} {2,31} = {3,31} | {4} | {5:X8} {6:X8} {7:X8} {8:X8}",  //
                      a, symbol, b, sres, code, bits[3], bits[2], bits[1], bits[0], n);
       }
     }
