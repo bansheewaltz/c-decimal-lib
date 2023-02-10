@@ -7,7 +7,7 @@
 
 /* changable variables*/
 #define FILE_PATH "./test_cases/mul.bin"
-#define NUMBER_OF_TESTS 231
+#define NUMBER_OF_TESTS 324
 #define RECORD_SIZE_BYTES (3 * DEC_IN_BYTES + 1 * INT_IN_BYTES)
 #define BUFFER_SIZE_BYTES (RECORD_SIZE_BYTES * NUMBER_OF_TESTS)
 
@@ -22,7 +22,7 @@ int32_t ret;
 int32_t cs_ret;
 
 #suite mul
-#test-loop(0, 231) iterate_file
+#test-loop(0, 324) iterate_file
     memcpy(&a, buffer + _i * RECORD_SIZE_BYTES, 16);
     memcpy(&b, buffer + _i * RECORD_SIZE_BYTES + 16, 16);
     memcpy(&cs_ret, buffer + _i * RECORD_SIZE_BYTES + 16 * 2, 4);

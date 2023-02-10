@@ -16,9 +16,13 @@ generate:
 
 style:
 	clang-format -style=Google -i *.{c,cs}
+# style:
+# 	cp ../../materials/linters/.clang-format .
+# 	clang-format -n *.{c,h,cs} || true
+# 	clang-format -i *.{c,h,cs} || true
 
 
-FNAME := mul
+FNAME := div
 checkmk:
 	checkmk clean_mode=1 $(FNAME)_test.check > $(FNAME)_test.c
 	@$(MAKE) style
