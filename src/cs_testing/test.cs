@@ -15,7 +15,7 @@ static class Tester {
   public static string tests_path = "./test_cases";
   public static string tests_txt_path = $"{tests_path}/txt";
   static void Main() {
-    // SimpleTest.check_difference();
+    // SimpleTest.signed_zero();
     Directory.CreateDirectory(tests_txt_path);
     ConversionSample.print();
 
@@ -445,7 +445,20 @@ namespace CustomExtensions {
       return value / 1.000000000000000000000000000000000m;
     }
     public static decimal NormalizeBits(this decimal d) {
-      return decimal.Parse(d.Normalize().ToString());
+      decimal tmp = decimal.Parse(d.Normalize().ToString());
+
+      if (d != 0) {
+        return tmp;
+      } else {
+        int[] parts = Decimal.GetBits(d);
+        bool sign = (parts[3] & 0x80000000) != 0;
+
+        if (sign == true) {
+          return Decimal.Multiply(tmp, -1);
+        } else {
+          return tmp;
+        }
+      }
     }
   }
   public static class BinaryWriterExtensions {
@@ -674,5 +687,9 @@ static class SimpleTest {
     decimal nz = new decimal(0, 0, 0, true, 0);
     Console.WriteLine($"{pz} {pz.GetHexString()}");
     Console.WriteLine($"{nz} {nz.GetHexString()}");
+
+    decimal b = Decimal.Multiply(0m, -1);
+    Console.WriteLine($"{b} {b.GetHexString()}");
+    Console.WriteLine(Math.Sign(b) + " " + Math.Sign(-1m));
   }
 }
