@@ -15,7 +15,7 @@ static class Tester {
   public static string tests_path = "./test_cases";
   public static string tests_txt_path = $"{tests_path}/txt";
   static void Main() {
-    // SimpleTest.normalization();
+    // SimpleTest.check_difference();
     Directory.CreateDirectory(tests_txt_path);
     ConversionSample.print();
 
@@ -125,8 +125,9 @@ static class Tester {
           }
         }
         bw.Serialize(a, b, ret, res_norm);
-        var hex_norm = ret == 0 ? res_norm.GetHexString() : "undefined behaviour";
-        var hex = ret == 0 ? res.GetHexString() : "undefined behaviour";
+
+        var hex_norm = res_norm.GetHexString(ret);
+        var hex = res.GetHexString(ret);
         dw.WriteLine(
             $"{n,3}|{a,32} {symbol} {b,31} = {sres,31} | {ret} | {hex_norm,-35} | {hex,-35} = {a.GetHexString()} {symbol} {b.GetHexString()}");
       }
@@ -185,8 +186,9 @@ static class Tester {
           }
         }
         bw.Serialize(a, b, ret, res);
-        var hex_norm = ret == 0 ? res_norm.GetHexString() : "undefined behaviour";
-        var hex = ret == 0 ? res.GetHexString() : "undefined behaviour";
+
+        var hex_norm = res_norm.GetHexString(ret);
+        var hex = res.GetHexString(ret);
         dw.WriteLine(
             $"{n,3}|{a,32} {symbol} {b,31} = {sres,31} | {ret} | {hex_norm,-35} | {hex,-35} = {a.GetHexString()} {symbol} {b.GetHexString()}");
       }
@@ -289,9 +291,9 @@ static class Tester {
     var bw = new BinaryWriter(File.Open($"{tests_path}/{op}.bin", FileMode.Create));
     var dw = new StreamWriter(File.Open($"{path}/{op}.txt", FileMode.Create));
     Headers.WriteConvertorOpHeader(dw);
-    Int32 in_int, res_int = 0;
-    Single in_float, res_float = 0f;
-    Decimal in_dec, res_dec = Decimal.Zero;
+    Int32 in_int = 0, res_int = 0;
+    Single in_float = 0, res_float = 0;
+    Decimal in_dec = 0, res_dec = 0;
     String in_str = "placeholder", res_str = "placeholder";
     int n = 0, left_field = 0, right_field = 0;
     Int32 ret;
@@ -352,29 +354,23 @@ static class Tester {
         ret = 1;
         res_str = "error";
       }
-      // dw.WriteLine($"{n,3}|{in_str, 32}{res_str,30}|{ret,2}");
-
-      // var fmt = $"{n, 3}|{{0, {in_str.Length}}} {op} {res_str,30}|{ret,2}";
-      // dw.WriteLine($"{n,3}|{in_str,in_str.Length} {op} {res_str,30}|{ret,2}");
-      // dw.WriteLine(fmt, in_str);
-
-      // var fmt = $"{n, 3}|{{0, {left_field}}} {op} {{1, {right_field}}}|{ret,2}";
-      // dw.WriteLine(fmt, in_str, res_str);
-      var fmt = $"{n, 3}|{{0, {left_field}}}|{{1, {right_field}}}|{ret,2} | ";
+      var fmt = $"{n, 3}|{{0, {left_field}}} |{{1, {right_field}}} |{ret,2} | ";
       dw.Write(fmt, in_str, res_str);
-      if (op == "from_int_to_decimal" || op == "from_float_to_decimal") {
-        dw.WriteLine((ret == 0 ? res_dec.GetHexString() : "undefined behaviour"));
-      } else if (op == "from_decimal_to_float") {
-        // dw.WriteLine(Convert.ToInt32(res_float).ToString("X8"));
-        // dw.WriteLine(BitConverter.GetBytes(res_float));
-        // dw.WriteLine($"{BitConverter.GetBytes(res_float),8:X8}");
-        dw.WriteLine(res_float.GetHexString());
-      } else if (op == "from_decimal_to_int") {
-        dw.WriteLine(res_int.GetHexString());
-      }
 
-      // dw.WriteLine(("{0,-11}|{1,2} {3} {4,5}|{6,2}", n, in_str, left_field, op, res_str,
-      // right_field, ret));
+      switch (op) {
+        case "from_int_to_decimal":
+          dw.WriteLine($"{in_int.GetHexString()} -> {res_dec.GetHexString(ret)}");
+          break;
+        case "from_float_to_decimal":
+          dw.WriteLine($"{in_float.GetHexString()} -> {res_dec.GetHexString(ret)}");
+          break;
+        case "from_decimal_to_float":
+          dw.WriteLine($"{in_dec.GetHexString()} -> {res_float.GetHexString()}");
+          break;
+        case "from_decimal_to_int":
+          dw.WriteLine($"{in_dec.GetHexString()} -> {res_int.GetHexString()}");
+          break;
+      }
     }
     bw.Close();
     dw.Close();
@@ -474,11 +470,6 @@ namespace CustomExtensions {
       bw.Write(ret);
       bw.Write(res);
     }
-    // public static void Serialize(this BinaryWriter bw, params object[] list) {
-    //   for (int i = 0; i < list.Length; ++i) {
-    //     bw.Write(list[i]);
-    //   }
-    // }
   }
   public static class StringExtensions {
     public static string Repeat(this char c, int n) {
@@ -488,12 +479,15 @@ namespace CustomExtensions {
       var bits = decimal.GetBits(d);
       return $"{bits[3],8:X8}{bits[2],9:X8}{bits[1],9:X8}{bits[0],9:X8}";
     }
+    public static string GetHexString(this decimal d, Int32 ret) {
+      return ret == 0 ? d.GetHexString() : "undefined behaviour";
+    }
     public static string GetHexString(this int i) {
       return i.ToString("X8");
     }
     public static string GetHexString(this Single s) {
       var bytes = BitConverter.GetBytes(s);
-      return BitConverter.ToInt32(bytes,0).GetHexString();
+      return BitConverter.ToInt32(bytes, 0).GetHexString();
     }
     public static string GetBinaryString(this decimal d) {
       var bits = decimal.GetBits(d);
@@ -522,6 +516,11 @@ namespace CustomUtilities {
     }
     public static void PrintError(string method_name, string op) {
       Console.WriteLine($"Incorrect function \"{method_name}\" input: \"{op}\"");
+      string[] files =
+          Directory.GetFiles(Tester.tests_path, $"*{op}.*", SearchOption.AllDirectories);
+      for (int i = 0; i < files.Length; ++i) {
+        File.Delete(files[i]);
+      }
       System.Environment.Exit(1);
     }
   }
@@ -542,12 +541,8 @@ namespace CustomUtilities {
       dw.WriteLine('-'.Repeat(149));
     }
     public static void WriteConvertorOpHeader(StreamWriter dw) {
-      // public static void WriteConvertorOpHeader(StreamWriter dw, string op) {
-      // string fmt = $"{" n
-      // "}|{"a",17}{"|",16}{{0,{(op.Length+8)/2}}}{{1,{(op.Length-8+1)/2}}}|{"result",
-      // 8}{"|",4}{"ret", 3}"; dw.WriteLine(string.Format(fmt, "function", " "));
       dw.WriteLine(" n |");
-      dw.WriteLine('-'.Repeat(74));
+      dw.WriteLine('-'.Repeat(106));
     }
   }
   public static class If {
@@ -665,9 +660,19 @@ static class SimpleTest {
       Console.WriteLine($"{d,32}  {d.GetHexString()}  {d.GetBinaryString()}");
     }
   }
+  public static void check_difference() {
+    decimal d = -0.1m * -7.9228162514264337593543950335m;
+    Console.WriteLine($"{d} {d.GetHexString()}");
 
-  // public static void writer() {
-  //   var bw = new BinaryWriter(File.Open($"check.bin", FileMode.Create));
-  //   bw.Serialize(1m, 2m, 5);
-  // }
+    decimal a = new decimal(-1717986918, 1717986919, 429496729, false, 28);
+    decimal b = new decimal(-1717986919, 1717986919, 429496729, false, 28);
+    Console.WriteLine($"{a} {a.GetHexString()}");
+    Console.WriteLine($"{b} {b.GetHexString()}");
+  }
+  public static void signed_zero() {
+    decimal pz = new decimal(0, 0, 0, false, 0);
+    decimal nz = new decimal(0, 0, 0, true, 0);
+    Console.WriteLine($"{pz} {pz.GetHexString()}");
+    Console.WriteLine($"{nz} {nz.GetHexString()}");
+  }
 }

@@ -22,7 +22,7 @@ style:
 # 	clang-format -i *.{c,h,cs} || true
 
 
-FNAME := div
+FNAME := mul
 checkmk:
 	checkmk clean_mode=1 $(FNAME)_test.check > $(FNAME)_test.c
 	@$(MAKE) style
