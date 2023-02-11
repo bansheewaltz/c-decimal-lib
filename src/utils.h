@@ -90,6 +90,8 @@ work_decimal divremain(work_decimal v_1, work_decimal v_2);
 // дописывает дробную часть в res деления битов v_1 на v_2 (v1 < v2)
 // в количестве MAXEXP + 1 знаков после запятой
 void divtail(work_decimal v_1, work_decimal v_2, work_decimal *res);
+// переводит цифру в символ цифры
+int char2num(char c);
 
 // возвращает децимал, записывая значения битов
 s21_decimal set21(int bits3, int bits2, int bits1, int bits0);

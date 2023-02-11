@@ -364,6 +364,10 @@ int checkoverflowmult(work_decimal res) {
   return overflow;
 } */
 
+int char2num(char c) {
+  return c - '0';
+}
+
 s21_decimal set21(int bits3, int bits2, int bits1, int bits0) {
   s21_decimal value;
   value.bits[0] = bits0 & MAX4BIT;

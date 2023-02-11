@@ -35,10 +35,9 @@ int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 
 int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   int overflow = 0;
-  if (iszero(value_1) || iszero(value_2)) {
-    for (int16_t i = 0; i < 4; ++i) result->bits[i] = 0;
-  } else {
-    int sign = (isminus(value_1) == isminus(value_2)) ? 0 : 1;
+  int sign = (isminus(value_1) == isminus(value_2)) ? 0 : 1;
+  if (iszero(value_1) || iszero(value_2)) *result = set21(MINUS * sign, 0, 0, 0);
+  else {
     work_decimal v_1 = convert2work(value_1), v_2 = convert2work(value_2),
                  res = initwork();
     res.exp = v_1.exp + v_2.exp;
@@ -59,12 +58,11 @@ int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 
 int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   int overflow = 0;
+  int sign = (isminus(value_1) == isminus(value_2)) ? 0 : 1;
   if (iszero(value_2))
     overflow = 3;
-  else if (iszero(value_1)) {
-    for (int16_t i = 0; i < 4; ++i) result->bits[i] = 0;
-  } else {
-    int sign = (isminus(value_1) == isminus(value_2)) ? 0 : 1;
+  else if (iszero(value_1)) *result = set21(MINUS * sign, 0, 0, 0);
+  else {
     work_decimal v_1 = convert2work(value_1), v_2 = convert2work(value_2),
                  res = initwork();
     if (v_1.exp < v_2.exp) {
@@ -132,10 +130,53 @@ int s21_from_decimal_to_int(s21_decimal src, int *dst) {
         2. Запомнить знак (isminus). Конвертируем в рабочий децимал
      (convert2work)
         3. Сдвигаем запятую (dellast) пока степень не станет 0
-        4. Если последняя удаленная цифра больше 4, добавить 1 (addnum с 1)
-        5. Если bits[3] или bits[2] или bits[1] не ноль или bits[0] > NOTMINUS
+        4. Если bits[3] или bits[2] или bits[1] не ноль или bits[0] > NOTMINUS
      то ошибка
-        6. Если ошибки нет приравниваем bits[0] и если нужно меняем знак  */
+        5. Если ошибки нет приравниваем bits[0] и если нужно меняем знак  */
+}
+
+int s21_from_float_to_decimal(float src, s21_decimal *dst) {
+  int overflow = 0;
+  if (src == 0) *dst = set21(0, 0, 0, 0);
+  else {
+    int sign = (src < 0) ? 1 : 0;
+    src = fabs(src);
+    if (src < 1e-28) {
+      overflow = 1;
+      *dst = set21(0, 0, 0, 0);
+    } else if (src > 7.92281625e28) overflow = 1;
+    else {
+      char foo[15];
+      sprintf(foo, "%+.6e", src);
+      int val = char2num(foo[1]);
+      for (uint16_t i = 3; i < 9; ++i) val = 10 * val + char2num(foo[i]);
+      int exp = 0;
+      sscanf(foo + 10, "%d", &exp);
+      exp -= 6;
+      work_decimal value = initwork();
+      value.bits[0] = val;
+      if (exp > 0) {
+        for (uint16_t i = 0; i < exp; ++i) overflow = bits10up(&value);
+      } else {
+        value.exp = -exp;
+        overflow = normalize(&value);
+      }
+      *dst = convert2s21(value, sign);
+    }
+  }
+  return overflow;
+}
+
+int s21_from_decimal_to_float(s21_decimal src, float *dst) {
+  if (iszero(src)) *dst = 0;
+  else {
+    int sign = (isminus(src))? -1: 1;
+    int exp = (src.bits[3] & NOTMINUS) >> 16;
+    uint32_t value[3];
+    for (uint16_t i = 0; i < 3; ++i) value[i] = (unsigned int) src.bits[i];
+    *dst = (pow(2, 64) * value[2] + pow(2, 32) * value[1] + value[0]) * pow(10, -exp) * sign;
+  }
+  return 0;
 }
 
 int s21_floor(s21_decimal value, s21_decimal *result) {
