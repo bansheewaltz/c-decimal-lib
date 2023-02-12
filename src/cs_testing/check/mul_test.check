@@ -25,7 +25,6 @@ int32_t cs_ret;
     ret = s21_mul(a, b, &res);
 
     ck_assert_int_eq(ret, cs_ret);
-    // consider changing result variable binary form in accordance to C#
     if (ret == 0){
         if (iszero(res)){
             ck_assert(iszero(res) == iszero(cs_res));

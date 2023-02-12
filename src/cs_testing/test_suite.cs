@@ -15,7 +15,8 @@ static class Tester {
   public static string tests_path = "./test_cases";
   public static string tests_txt_path = $"{tests_path}/txt";
   static void Main() {
-    // SimpleTest.float_to_dec();
+    /* handy stuff */
+    // SimpleTest.signed_zero_multiply();
     // Directory.CreateDirectory(tests_txt_path);
     // ConversionSample.print();
 
@@ -299,60 +300,75 @@ static class Tester {
     Int32 ret = 0;
 
     for (int i = 0; i < unary_op_cases_n; ++i, ++n) {
-      try {
-        switch (op) {
-          case "from_int_to_decimal":
-            in_int = int_cases[i];
-            in_str = Convert.ToString(in_int);
-            res_dec = Convert.ToDecimal(in_int);
-            res_str = Convert.ToString(res_dec);
-            left_field = 12;
-            right_field = 12;
+      ret = 0;
+      switch (op) {
+        case "from_int_to_decimal":
+          in_int = int_cases[i];
+          in_str = Convert.ToString(in_int);
+          try {
+            res_dec = (decimal)(in_int);
+          } catch {
+            ret = 1;
+            res_str = "error";
+          }
+          res_str = Convert.ToString(res_dec);
+          left_field = 12;
+          right_field = 12;
 
-            bw.Write(in_int);
-            bw.Write(res_dec);
-            break;
-          case "from_float_to_decimal":
-            in_float = (float)float_cases[i];
-            in_str = Convert.ToString(in_float);
+          bw.Write(in_int);
+          bw.Write(res_dec);
+          break;
+        case "from_float_to_decimal":
+          in_float = float_cases[i];
+          in_str = Convert.ToString(in_float);
+          try {
             res_dec = ((decimal)(in_float)).NormalizeBits();
-            res_str = Convert.ToString(res_dec);
-            left_field = 14;
-            right_field = 32;
+          } catch {
+            ret = 1;
+            res_str = "error";
+          }
+          res_str = Convert.ToString(res_dec);
+          left_field = 14;
+          right_field = 32;
 
-            bw.Write(in_float);
-            bw.Write(res_dec);
-            break;
-          case "from_decimal_to_int":
-            in_dec = decimal_cases[i];
-            in_str = Convert.ToString(in_dec);
-            res_int = Convert.ToInt32(in_dec);
-            res_str = Convert.ToString(res_int);
-            left_field = 32;
-            right_field = 12;
+          bw.Write(in_float);
+          bw.Write(res_dec);
+          break;
+        case "from_decimal_to_int":
+          in_dec = decimal_cases[i];
+          in_str = Convert.ToString(in_dec);
+          try {
+            res_int = (int)(in_dec);
+          } catch {
+            ret = 1;
+            res_str = "error";
+          }
+          res_str = Convert.ToString(res_int);
+          left_field = 32;
+          right_field = 12;
 
-            bw.Write(in_dec);
-            bw.Write(res_int);
-            break;
-          case "from_decimal_to_float":
-            in_dec = decimal_cases[i];
-            in_str = Convert.ToString(in_dec);
+          bw.Write(in_dec);
+          bw.Write(res_int);
+          break;
+        case "from_decimal_to_float":
+          in_dec = decimal_cases[i];
+          in_str = Convert.ToString(in_dec);
+          try {
             res_float = (float)(in_dec);
-            res_str = Convert.ToString(res_float);
-            left_field = 32;
-            right_field = 14;
+          } catch {
+            ret = 1;
+            res_str = "error";
+          }
+          res_str = Convert.ToString(res_float);
+          left_field = 32;
+          right_field = 14;
 
-            bw.Write(in_dec);
-            bw.Write(res_float);
-            break;
-          default:
-            Terminate.PrintError(Terminate.GetCurrentMethod(), op);
-            break;
-        }
-        ret = 0;
-      } catch {
-        ret = 1;
-        res_str = "error";
+          bw.Write(in_dec);
+          bw.Write(res_float);
+          break;
+        default:
+          Terminate.PrintError(Terminate.GetCurrentMethod(), op);
+          break;
       }
       bw.Write(ret);
       var fmt = $"{n, 3}|{{0, {left_field}}} |{{1, {right_field}}} |{ret,2} | ";
@@ -424,18 +440,17 @@ public static class Generator {
     float_cases.Add(-0.0001f);
     float_cases.Add(1f);
     float_cases.Add(-1f);
-    // // float_cases.Add(Single.NegativeZero);
-    // // float_cases.Add(float.E);
-    // // float_cases.Add(Single.Tau);
-    // // float_cases.Add(Single.Nan);
-    // float_cases.Add(Single.Epsilon);
-    // float_cases.Add(Single.NegativeInfinity);
-    // float_cases.Add(Single.PositiveInfinity);
-    // float_cases.Add(Single.MinValue);
-    // float_cases.Add(Single.MaxValue);
+    float_cases.Add(Single.Epsilon);
+    float_cases.Add(Single.NegativeInfinity);
+    float_cases.Add(Single.PositiveInfinity);
+    float_cases.Add(Single.MinValue);
+    float_cases.Add(Single.MaxValue);
+    float_cases.Add(Single.NaN);
+    // float_cases.Add(Single.NegativeZero);
+    // float_cases.Add(Single.E);
+    // float_cases.Add(Single.Tau);
     for (int i = 0; i < Tester.unary_op_cases_n; ++i) {
       float_cases.Add(rnd.NextFloat());
-      // Console.WriteLine(System.Runtime.InteropServices.Marshal.SizeOf(rnd.NextFloat()));
     }
     return float_cases;
   }
@@ -702,73 +717,30 @@ static class SimpleTest {
     Console.WriteLine($"{a} = {b}");
   }
   public static void signed_zero_multiply() {
-    decimal a = new decimal(0, 0, 0, false, 0);
-    decimal b = new decimal(0, 0, 0, true, 0);
-    Console.WriteLine(
-        $"{a} * -{b} = {Decimal.Multiply(a, b).GetHexString()} = {a.GetHexString()} * {b.GetHexString()}");
-    a = 0m;
-    b = -1m;
-    Console.WriteLine(
-        $"{a} * {b} = {Decimal.Multiply(a, b).GetHexString()} = {a.GetHexString()} * {b.GetHexString()}");
-    a = -1m;
-    b = 0m;
-    Console.WriteLine(
-        $"{a} * {b} = {Decimal.Multiply(a, b).GetHexString()} = {a.GetHexString()} * {b.GetHexString()}");
-    a = 1m;
-    b = -1m;
-    Console.WriteLine(
-        $"{a} * {b} = {Decimal.Multiply(a, b).GetHexString()} = {a.GetHexString()} * {b.GetHexString()}");
-    a = 1m;
-    b = -0.1m;
-    Console.WriteLine(
-        $"{a} * {b} = {Decimal.Multiply(a, b).GetHexString()} = {a.GetHexString()} * {b.GetHexString()}");
-    a = 0.1m;
-    b = -0.1m;
-    Console.WriteLine(
-        $"{a} * {b} = {Decimal.Multiply(a, b).GetHexString()} = {a.GetHexString()} * {b.GetHexString()}");
-    a = -1m;
-    b = -0.1m;
-    Console.WriteLine(
-        $"{a} * {b} = {Decimal.Multiply(a, b).GetHexString()} = {a.GetHexString()} * {b.GetHexString()}");
-    a = 0m;
-    b = -0.3333333333333333333333333333m;
-    Console.WriteLine(
-        $"{a} * {b} = {Decimal.Multiply(a, b).GetHexString()} = {a.GetHexString()} * {b.GetHexString()}");
-    a = 0m;
-    b = -0.3333333333m;
-    Console.WriteLine(
-        $"{a} * {b} = {Decimal.Multiply(a, b).GetHexString()} = {a.GetHexString()} * {b.GetHexString()}");
-    a = 0m;
-    b = -0.33333333333m;
-    Console.WriteLine(
-        $"{a} * {b} = {Decimal.Multiply(a, b).GetHexString()} = {a.GetHexString()} * {b.GetHexString()}");
-    a = 0m;
-    b = -0.1111111111m;
-    Console.WriteLine(
-        $"{a} * {b} = {Decimal.Multiply(a, b).GetHexString()} = {a.GetHexString()} * {b.GetHexString()}");
-    a = 0m;
-    b = -0.11111111111m;
-    Console.WriteLine(
-        $"{a} * {b} = {Decimal.Multiply(a, b).GetHexString()} = {a.GetHexString()} * {b.GetHexString()}");
-    a = 0m;
-    b = -0.00000000001m;
-    Console.WriteLine(
-        $"{a} * {b} = {Decimal.Multiply(a, b).GetHexString()} = {a.GetHexString()} * {b.GetHexString()}");
-    a = 0m;
-    b = -0.0000000000000000000000000001m;
-    Console.WriteLine(
-        $"{a} * {b} = {Decimal.Multiply(a, b).GetHexString()} = {a.GetHexString()} * {b.GetHexString()}");
-    a = 0m;
-    b = -7.9228162514264337593543950335m;
-    Console.WriteLine(
-        $"{a} * {b} = {Decimal.Multiply(a, b).GetHexString()} = {a.GetHexString()} * {b.GetHexString()}");
-    a = 0m;
-    b = -7.922816251m;
-    Console.WriteLine(
-        $"{a} * {b} = {Decimal.Multiply(a, b).GetHexString()} = {a.GetHexString()} * {b.GetHexString()}");
-    a = 0m;
-    b = -7.92281625m;
-    Console.WriteLine(
-        $"{a} * {b} = {Decimal.Multiply(a, b).GetHexString()} = {a.GetHexString()} * {b.GetHexString()}");
+    var cases = new Tuple<decimal, decimal>[] {
+      Tuple.Create(new decimal(0, 0, 0, false, 0), new decimal(0, 0, 0, true, 0)),
+      Tuple.Create(0m, -1m),
+      Tuple.Create(1m, -1m),
+      Tuple.Create(1m, -0.1m),
+      Tuple.Create(0.1m, -0.1m),
+      Tuple.Create(-0.1m, -0.1m),
+      Tuple.Create(0m, -0.3333333333333333333333333333m),
+      Tuple.Create(0m, -0.33333333333m),
+      Tuple.Create(0m, -0.11111111111m),
+      Tuple.Create(0m, -0.00000000001m),
+      Tuple.Create(0m, -0.0000000000000000000000000001m),
+      Tuple.Create(0m, -7.922816251m),
+      Tuple.Create(0m, -7.92281625m),
+      Tuple.Create(0m, -15 / 13m),
+      Tuple.Create(0m, -15.92281625m),
+      Tuple.Create(0m, -15.922816983m),
+    };
+    decimal a, b;
+    for (int i = 0; i < cases.Length; ++i) {
+      a = cases[i].Item1;
+      b = cases[i].Item2;
+      Console.WriteLine(
+          $"{a,32} * {b,32} = {Decimal.Multiply(a, b).GetHexString()} = {a.GetHexString()} * {b.GetHexString()}");
+    }
   }
 }

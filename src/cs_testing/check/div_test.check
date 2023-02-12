@@ -25,7 +25,6 @@ int32_t cs_ret;
     ret = s21_div(a, b, &res);
 
     ck_assert_int_eq(ret, cs_ret);
-    // consider changing result variable binary form in accordance to C#
     if (ret == 0){
         ck_assert_mem_eq(&res, &cs_res, DEC_IN_BYTES);
     }

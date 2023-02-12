@@ -1,7 +1,8 @@
 # file pointers
 LIBNAME := s21_decimal
 REPORT := error_report.txt
-SRCS_CS := tests_generator.cs
+SRCS_CS := test_suite.cs
+UTILS := ../utils.c
 # compilation flags
 LDFLAGS = # will be set based on OS variable
 # paths
@@ -10,7 +11,7 @@ CHK := check
 TST := test_cases
 OBJ := obj
 EXE := build
-UTILS := ../utils.c
+# project files
 SRCS := $(wildcard *.c)
 TESTSC := $(SRCS:s21_%.c=$(SRC)/%_test.c)
 TEXECS := $(SRCS:s21_%.c=$(EXE)/%_test)
@@ -30,7 +31,7 @@ RM := rm -rf
 CLS := printf "\033c"
 
 
-all: clean generate
+all: generate
 clean:
 	$(RM) $(SRC)/*.c
 	$(RM) $(EXE)/*
@@ -42,12 +43,11 @@ generate:
 	mono $(EXE_CS)
 
 style:
-	@clang-format -style=Google -i *.{c,cs} $(SRC)/*
+	clang-format -style=Google -i *.{c,cs} $(SRC)/*
 
 
 # testing
-test: run
-run: $(TEXECS)
+test: $(TEXECS)
 	$(RM) $(REPORT)
 	$(foreach file, $(TEXECS), ./$(file) >> error_report.txt;)
 	#code $(REPORT)
@@ -57,7 +57,7 @@ $(SRC)/%.c: $(CHK)/%.check
 	checkmk clean_mode=1 $< > $@
 
 # testing of specified function
-FNAME := div
+FNAME := from_float_to_decimal
 testf:
 	@$(CLS)
 	@checkmk clean_mode=1 $(CHK)/$(FNAME)_test.check > $(SRC)/$(FNAME)_test.c

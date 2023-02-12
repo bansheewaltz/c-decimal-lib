@@ -16,7 +16,7 @@ int32_t ret;
 int32_t cs_ret;
 
 #suite from_decimal_to_float
-#test-loop(0, 201) iterate_file
+#test-loop(0, 200) iterate_file
     memcpy(&a, buffer + _i * RECORD_SIZE_BYTES, 16);
     memcpy(&cs_res, buffer + _i * RECORD_SIZE_BYTES + 16, 4);
     memcpy(&cs_ret, buffer + _i * RECORD_SIZE_BYTES + 16 + 4, 4);
