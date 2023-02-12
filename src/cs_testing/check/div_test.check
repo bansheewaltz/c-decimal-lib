@@ -1,12 +1,7 @@
-#include "../utils.h"
-#include <stdio.h>
-#include <stdint.h>
-#define DEC_IN_BYTES sizeof(s21_decimal)
-#define INT_IN_BYTES sizeof(int32_t)
-#define DEC_IN_INTS (DEC_IN_BYTES/INT_IN_BYTES)
+#include "tests_includes.h"
 
 /* changable variables*/
-#define FILE_PATH "./test_cases/div.bin"
+#define FILE_PATH "test_cases/div.bin"
 #define NUMBER_OF_TESTS 624
 #define RECORD_SIZE_BYTES (3 * DEC_IN_BYTES + 1 * INT_IN_BYTES)
 #define BUFFER_SIZE_BYTES (RECORD_SIZE_BYTES * NUMBER_OF_TESTS)

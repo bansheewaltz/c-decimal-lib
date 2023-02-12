@@ -2,12 +2,12 @@
 
 int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   int overflow = 0;
+  int sign = (isminus(value_1) == isminus(value_2)) ? 0 : 1;
   if (iszero(value_2))
     overflow = 3;
-  else if (iszero(value_1)) {
-    for (int16_t i = 0; i < 4; ++i) result->bits[i] = 0;
-  } else {
-    int sign = (isminus(value_1) == isminus(value_2)) ? 0 : 1;
+  else if (iszero(value_1))
+    *result = set21(MINUS * sign, 0, 0, 0);
+  else {
     work_decimal v_1 = convert2work(value_1), v_2 = convert2work(value_2),
                  res = initwork();
     if (v_1.exp < v_2.exp) {

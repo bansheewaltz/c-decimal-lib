@@ -1,32 +1,66 @@
-SRC := test.cs
-SRC := test.cs
-EXE := $(SRC:%.cs=%.exe)
+# file pointers
+LIBNAME := s21_decimal
+REPORT := error_report.txt
+SRCS_CS := tests_generator.cs
+# compilation flags
+LDFLAGS = # will be set based on OS variable
+# paths
+SRC := src
+CHK := check
 TST := test_cases
-LDFLAGS := $(shell pkg-config --cflags --libs check)
+OBJ := obj
+EXE := build
+UTILS := ../utils.c
+SRCS := $(wildcard *.c)
+TESTSC := $(SRCS:s21_%.c=$(SRC)/%_test.c)
+TEXECS := $(SRCS:s21_%.c=$(EXE)/%_test)
+EXE_CS := $(SRCS_CS:%.cs=%.exe)
+# platform dependent stuff
+OS := $(shell uname -s)
+ifeq ($(OS), Darwin)
+	LDFLAGS = -lcheck
+	ifeq ($(shell uname -p), arm) # M1+ Mac
+		LDFLAGS = $(shell pkg-config --cflags --libs check)
+	endif
+else ifeq ($(OS),Linux)
+	LDFLAGS = -lcheck -pthread -lcheck_pic -pthread -lrt -lm -lsubunit
+endif
+# macros
 RM := rm -rf
 CLS := printf "\033c"
 
-# mono framework should be installed
+
 all: clean generate
 clean:
-	@$(RM) *.exe *_test *_test.c
+	$(RM) $(SRC)/*.c
+	$(RM) $(EXE)/*
+	$(RM) $(REPORT)
+# generates tests in C#
+## mono framework should be installed
 generate:
-	@mcs $(SRC)
-	@mono $(EXE)
+	mcs $(SRCS_CS)
+	mono $(EXE_CS)
 
 style:
-	clang-format -style=Google -i *.{c,cs}
-# style:
-# 	cp ../../materials/linters/.clang-format .
-# 	clang-format -n *.{c,h,cs} || true
-# 	clang-format -i *.{c,h,cs} || true
+	@clang-format -style=Google -i *.{c,cs} $(SRC)/*
 
 
-FNAME := mul
-checkmk:
-	checkmk clean_mode=1 $(FNAME)_test.check > $(FNAME)_test.c
+# testing
+test: run
+run: $(TEXECS)
+	$(RM) $(REPORT)
+	$(foreach file, $(TEXECS), ./$(file) >> error_report.txt;)
+	#code $(REPORT)
+$(EXE)/%_test: $(SRC)/%_test.c
+	gcc $(LDFLAGS) -o $@ $< s21_$*.c ../utils.c	
+$(SRC)/%.c: $(CHK)/%.check
+	checkmk clean_mode=1 $< > $@
+
+# testing of specified function
+FNAME := div
+testf:
+	@$(CLS)
+	@checkmk clean_mode=1 $(CHK)/$(FNAME)_test.check > $(SRC)/$(FNAME)_test.c
 	@$(MAKE) style
-check: checkmk
-	$(CLS)
-	@gcc $(LDFLAGS) -o $(FNAME)_test s21_$(FNAME).c $(FNAME)_test.c ../utils.c
-	time ./$(FNAME)_test
+	@cd $(SRC) && gcc $(LDFLAGS) -o ../$(EXE)/$(FNAME)_test ../s21_$(FNAME).c $(FNAME)_test.c ../../utils.c
+	@time $(EXE)/$(FNAME)_test

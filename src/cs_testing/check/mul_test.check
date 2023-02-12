@@ -1,16 +1,10 @@
-#include "../utils.h"
-#include <stdio.h>
-#include <stdint.h>
-#define DEC_IN_BYTES sizeof(s21_decimal)
-#define INT_IN_BYTES sizeof(int32_t)
-#define DEC_IN_INTS (DEC_IN_BYTES/INT_IN_BYTES)
+#include "tests_includes.h"
 
 /* changable variables*/
-#define FILE_PATH "./test_cases/mul.bin"
+#define FILE_PATH "test_cases/mul.bin"
 #define NUMBER_OF_TESTS 324
 #define RECORD_SIZE_BYTES (3 * DEC_IN_BYTES + 1 * INT_IN_BYTES)
 #define BUFFER_SIZE_BYTES (RECORD_SIZE_BYTES * NUMBER_OF_TESTS)
-
 
 char buffer[BUFFER_SIZE_BYTES];
 FILE* file_ptr;
@@ -20,6 +14,7 @@ s21_decimal res;
 s21_decimal cs_res;
 int32_t ret;
 int32_t cs_ret;
+
 
 #suite mul
 #test-loop(0, 324) iterate_file
@@ -32,9 +27,12 @@ int32_t cs_ret;
     ck_assert_int_eq(ret, cs_ret);
     // consider changing result variable binary form in accordance to C#
     if (ret == 0){
+        if (iszero(res)){
+            ck_assert(iszero(res) == iszero(cs_res));
+        } else {
         ck_assert_mem_eq(&res, &cs_res, DEC_IN_BYTES);
+        }
     }
-
 
 #main-pre
     file_ptr = fopen(FILE_PATH, "rb");
