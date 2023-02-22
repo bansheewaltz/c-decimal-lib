@@ -80,6 +80,10 @@ void twos_complement_bits(work_decimal *value);
 // работает корректно, если value_1 > value_2
 work_decimal subbits(work_decimal value_1, work_decimal value_2);
 
+// прибавляет к value.bits[index] числа add1, add2, add3
+// в случае переполнения переносит лишнее в value.bits[index+1]
+void sumworkbits(work_decimal *value, uint32_t index, uint64_t add1,
+                 uint64_t add2, uint64_t add3);
 // возвращает побитвый сдвиг влево битов value на shift битов
 work_decimal shiftleft(work_decimal value, uint16_t shift);
 // делит биты v_1 на биты v_2 нацело, возвращает остаток, результат деления в

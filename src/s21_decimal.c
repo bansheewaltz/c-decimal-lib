@@ -35,18 +35,21 @@ int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 
 int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   int overflow = 0;
-  int sign = (isminus(value_1) == isminus(value_2)) ? 0 : 1;
-  if (iszero(value_1) || iszero(value_2)) *result = set21(MINUS * sign, 0, 0, 0);
-  else {
+  if (iszero(value_1) || iszero(value_2)) {
+    for (int16_t i = 0; i < 4; ++i) result->bits[i] = 0;
+  } else {
+    int sign = (isminus(value_1) == isminus(value_2)) ? 0 : 1;
     work_decimal v_1 = convert2work(value_1), v_2 = convert2work(value_2),
                  res = initwork();
     res.exp = v_1.exp + v_2.exp;
-    res.bits[0] = v_1.bits[0] * v_2.bits[0];
-    res.bits[1] = v_1.bits[1] * v_2.bits[0] + v_1.bits[0] * v_2.bits[1];
-    res.bits[2] = v_1.bits[0] * v_2.bits[2] + v_1.bits[1] * v_2.bits[1] +
-                  v_1.bits[2] * v_2.bits[0];
-    res.bits[3] = v_1.bits[1] * v_2.bits[2] + v_1.bits[2] * v_2.bits[1];
-    res.bits[4] = v_1.bits[2] * v_2.bits[2];
+    sumworkbits(&res, 0, v_1.bits[0] * v_2.bits[0], 0, 0);
+    sumworkbits(&res, 1, v_1.bits[1] * v_2.bits[0], v_1.bits[0] * v_2.bits[1],
+                0);
+    sumworkbits(&res, 2, v_1.bits[0] * v_2.bits[2], v_1.bits[1] * v_2.bits[1],
+                v_1.bits[2] * v_2.bits[0]);
+    sumworkbits(&res, 3, v_1.bits[1] * v_2.bits[2], v_1.bits[2] * v_2.bits[1],
+                0);
+    sumworkbits(&res, 4, v_1.bits[2] * v_2.bits[2], 0, 0);
     overflow = normalize(&res);
     if (overflow)
       overflow = (sign) ? 2 : 1;
@@ -61,7 +64,8 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   int sign = (isminus(value_1) == isminus(value_2)) ? 0 : 1;
   if (iszero(value_2))
     overflow = 3;
-  else if (iszero(value_1)) *result = set21(MINUS * sign, 0, 0, 0);
+  else if (iszero(value_1))
+    *result = set21(MINUS * sign, 0, 0, 0);
   else {
     work_decimal v_1 = convert2work(value_1), v_2 = convert2work(value_2),
                  res = initwork();
@@ -72,8 +76,7 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     }
     if (compearbits(v_1, shiftleft(v_2, 96)) < 0) {
       v_1 = divmain(v_1, v_2, &res);
-      if (!iszerow(v_1))
-        divtail(v_1, v_2, &res);
+      if (!iszerow(v_1)) divtail(v_1, v_2, &res);
     } else
       overflow = (sign) ? 2 : 1;
     if (overflow == 0) {
@@ -101,8 +104,7 @@ int s21_mod(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
         for (uint16_t i = 0; i < v_1.exp - v_2.exp; ++i) bits10up(&v_2);
       }
       v_1.exp = v_2.exp;
-      if (compearbits(v_1, shiftleft(v_2, 96)) < 0)
-        res = divremain(v_1, v_2);
+      if (compearbits(v_1, shiftleft(v_2, 96)) < 0) res = divremain(v_1, v_2);
       overflow = normalize(&res);
       *result = convert2s21(res, sign);
     }
@@ -137,14 +139,16 @@ int s21_from_decimal_to_int(s21_decimal src, int *dst) {
 
 int s21_from_float_to_decimal(float src, s21_decimal *dst) {
   int overflow = 0;
-  if (src == 0) *dst = set21(0, 0, 0, 0);
+  if (src == 0)
+    *dst = set21(0, 0, 0, 0);
   else {
     int sign = (src < 0) ? 1 : 0;
     src = fabs(src);
     if (src < 1e-28) {
       overflow = 1;
       *dst = set21(0, 0, 0, 0);
-    } else if (src > 7.92281625e28) overflow = 1;
+    } else if (src > 7.92281625e28)
+      overflow = 1;
     else {
       char foo[15];
       sprintf(foo, "%+.6e", src);
@@ -168,13 +172,15 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {
 }
 
 int s21_from_decimal_to_float(s21_decimal src, float *dst) {
-  if (iszero(src)) *dst = 0;
+  if (iszero(src))
+    *dst = 0;
   else {
-    int sign = (isminus(src))? -1: 1;
+    int sign = (isminus(src)) ? -1 : 1;
     int exp = (src.bits[3] & NOTMINUS) >> 16;
     uint32_t value[3];
-    for (uint16_t i = 0; i < 3; ++i) value[i] = (unsigned int) src.bits[i];
-    *dst = (pow(2, 64) * value[2] + pow(2, 32) * value[1] + value[0]) * pow(10, -exp) * sign;
+    for (uint16_t i = 0; i < 3; ++i) value[i] = (unsigned int)src.bits[i];
+    *dst = (pow(2, 64) * value[2] + pow(2, 32) * value[1] + value[0]) *
+           pow(10, -exp) * sign;
   }
   return 0;
 }
