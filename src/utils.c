@@ -172,7 +172,8 @@ int normalize(work_decimal *value) {
     remainder = dellast(value);
     if (remainder) countround++;
   }
-  if (bankround(*value, remainder, countround)) {
+  overflow = needdown(*value);
+  if (bankround(*value, remainder, countround) && overflow == 0) {
     if (addnum(value, 1)) overflow = 1;
     if (needdown(*value)) {
       if (value->exp > 0) {
