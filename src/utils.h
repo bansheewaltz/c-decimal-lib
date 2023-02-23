@@ -6,7 +6,7 @@
 #define MAX4BIT 0xffffffff
 #define MINUS 0x80000000
 #define NOTMINUS 0x7fffffff
-#define WORKBITS 6
+#define WORKBITS 7
 
 typedef struct {
   uint64_t bits[WORKBITS];
