@@ -5,9 +5,10 @@
 #include "utils.h"
 
 int s21_negate(s21_decimal value, s21_decimal *result) {
+  int error = (result) ? 0 : 1;
   for (uint16_t i = 0; i < 3; ++i) result->bits[i] = value.bits[i];
   result->bits[3] = value.bits[3] ^ MINUS;
-  return 0;
+  return error;
 }
 
 int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
@@ -34,7 +35,7 @@ int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 }
 
 int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-  int overflow = 0;
+  int overflow = (result) ? 0 : 4;
   if (iszero(value_1) || iszero(value_2)) {
     for (int16_t i = 0; i < 4; ++i) result->bits[i] = 0;
   } else {
@@ -60,7 +61,7 @@ int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 }
 
 int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-  int overflow = 0;
+  int overflow = (result) ? 0 : 4;
   int sign = (isminus(value_1) == isminus(value_2)) ? 0 : 1;
   if (iszero(value_2))
     overflow = 3;
@@ -88,7 +89,7 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 }
 
 int s21_mod(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
-  int overflow = 0;
+  int overflow = (result) ? 0 : 4;
   if (iszero(value_2))
     overflow = 3;
   else {
@@ -138,16 +139,13 @@ int s21_from_decimal_to_int(s21_decimal src, int *dst) {
 }
 
 int s21_from_float_to_decimal(float src, s21_decimal *dst) {
-  int overflow = 0;
-  if (src == 0)
-    *dst = set21(0, 0, 0, 0);
-  else {
+  int overflow = (dst) ? 0 : 1;
+  if (isnan(src)) overflow = 1;
+  if (overflow == 0) *dst = set21(0, 0, 0, 0);
+  if (src && overflow == 0) {
     int sign = (src < 0) ? 1 : 0;
     src = fabs(src);
-    if (src < 1e-28) {
-      overflow = 1;
-      *dst = set21(0, 0, 0, 0);
-    } else if (src > 7.92281625e28)
+    if (src < 1e-28 || src > 7.92281625e28)
       overflow = 1;
     else {
       char foo[15];
@@ -172,7 +170,8 @@ int s21_from_float_to_decimal(float src, s21_decimal *dst) {
 }
 
 int s21_from_decimal_to_float(s21_decimal src, float *dst) {
-  if (iszero(src))
+  int error = (dst) ? 0 : 1;
+  if (iszero(src) && error == 0)
     *dst = 0;
   else {
     int sign = (isminus(src)) ? -1 : 1;
@@ -182,7 +181,7 @@ int s21_from_decimal_to_float(s21_decimal src, float *dst) {
     *dst = (pow(2, 64) * value[2] + pow(2, 32) * value[1] + value[0]) *
            pow(10, -exp) * sign;
   }
-  return 0;
+  return error;
 }
 
 int s21_floor(s21_decimal value, s21_decimal *result) {
