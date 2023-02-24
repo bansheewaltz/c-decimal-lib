@@ -14,7 +14,7 @@ int iszerow(work_decimal value) {
 
 int isminus(s21_decimal value) { return (value.bits[3] & MINUS) == MINUS; }
 
-void setminus(s21_decimal *value) { value->bits[3] |= MINUS; }
+void setplus(s21_decimal *value) { value->bits[3] &= NOTMINUS; }
 
 work_decimal convert2work(s21_decimal value) {
   work_decimal result;
@@ -109,6 +109,34 @@ int needdown(work_decimal value) {
   return need;
 }
 
+void work2normal(work_decimal *value) {
+  if (value->exp > 0) {
+    work_decimal foo = *value;
+    int doing = 1, remainder = 0;
+    while (doing) {
+      if (value->exp > 0) {
+        remainder = dellast(&foo);
+        if (remainder == 0)
+          *value = foo;
+        else
+          doing = 0;
+      } else
+        doing = 0;
+    }
+  }
+}
+
+s21_decimal s21normal(s21_decimal value) {
+  s21_decimal res = set21(0, 0, 0, 0);
+  if (!iszero(value)) {
+    int sign = isminus(value);
+    work_decimal foo = convert2work(value);
+    work2normal(&foo);
+    res = convert2s21(foo, sign);
+  }
+  return res;
+}
+
 int normalize(work_decimal *value) {
   int overflow = 0;
   unsigned int remainder = 0, countround = 0;
@@ -131,21 +159,7 @@ int normalize(work_decimal *value) {
         overflow = 1;
     }
   }
-  if (value->exp > 0 && overflow == 0) {
-    work_decimal foo = *value;
-    int doing = 1;
-    remainder = 0;
-    while (doing) {
-      if (value->exp > 0) {
-        remainder = dellast(&foo);
-        if (remainder == 0)
-          *value = foo;
-        else
-          doing = 0;
-      } else
-        doing = 0;
-    }
-  }
+  if (!overflow) work2normal(value);
   return overflow;
 }
 
@@ -261,7 +275,7 @@ work_decimal divremain(work_decimal v_1, work_decimal v_2) {
 
 void divtail(work_decimal v_1, work_decimal v_2, work_decimal *res) {
   unsigned int stop = 0;
-  for (uint16_t i = 0; i < MAXEXP + 1 && stop == 0; ++i) {
+  for (uint16_t i = 0; i < MAXEXP + 2 && stop == 0; ++i) {
     stop = bits10up(res);
     if (stop == 0) {
       res->exp += 1;

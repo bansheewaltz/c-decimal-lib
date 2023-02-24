@@ -16,7 +16,7 @@ typedef struct {
 int iszero(s21_decimal value);
 int iszerow(work_decimal value);
 int isminus(s21_decimal value);
-void setminus(s21_decimal *value);
+void setplus(s21_decimal *value);
 
 work_decimal convert2work(s21_decimal value);
 s21_decimal convert2s21(work_decimal value, int sign);
@@ -32,6 +32,8 @@ unsigned int pointequalize(work_decimal *value1, work_decimal *value2);
 int bankround(work_decimal value, unsigned int remander,
               unsigned int countround);
 int needdown(work_decimal value);
+void work2normal(work_decimal *value);
+s21_decimal s21normal(s21_decimal value);
 int normalize(work_decimal *value);
 
 int compearbits(work_decimal value_1, work_decimal value_2);

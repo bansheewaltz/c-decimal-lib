@@ -16,7 +16,7 @@ int s21_negate(s21_decimal value, s21_decimal *result) {
 int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   int overflow = (result) ? 0 : 4;
   if ((iszero(value_1) || iszero(value_2)) && !overflow)
-    *result = (iszero(value_1)) ? value_2 : value_1;
+    *result = (iszero(value_1)) ? s21normal(value_2) : s21normal(value_1);
   else if (!overflow) {
     int sign_1 = isminus(value_1), sign_2 = isminus(value_2);
     work_decimal v_1 = convert2work(value_1), v_2 = convert2work(value_2),
@@ -28,7 +28,7 @@ int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
       int who_grate = compearbits(v_1, v_2);
       if (who_grate == 1)
         res = subbits(v_1, v_2);
-      else if (who_grate == 1) {
+      else if (who_grate == -1) {
         sign_1 = sign_2;
         res = subbits(v_2, v_1);
       }
@@ -108,17 +108,20 @@ int s21_mod(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     overflow = 3;
   else if (!overflow) {
     int sign = isminus(value_1);
-    if (s21_is_less(value_1, value_2))
+    value_1 = s21normal(value_1); value_2 = s21normal(value_2);
+    s21_decimal foo = value_1;
+    setplus(&foo); setplus(&value_2);
+    if (s21_is_less(foo, value_2))
       *result = value_1;
     else {
       work_decimal v_1 = convert2work(value_1), v_2 = convert2work(value_2),
                    res = initwork();
       if (v_1.exp < v_2.exp) {
         for (uint16_t i = 0; i < v_2.exp - v_1.exp; ++i) bits10up(&v_1);
+        v_1.exp = v_2.exp;
       } else {
         for (uint16_t i = 0; i < v_1.exp - v_2.exp; ++i) bits10up(&v_2);
       }
-      v_1.exp = v_2.exp;
       if (compearbits(v_1, shiftleft(v_2, 96)) < 0) res = divremain(v_1, v_2);
       overflow = normalize(&res);
       *result = convert2s21(res, sign);
@@ -180,7 +183,7 @@ int s21_is_not_equal(s21_decimal value_1, s21_decimal value_2) {
 
 int s21_from_int_to_decimal(int src, s21_decimal *dst) {
   int error = (dst) ? 0 : 1;
-  if (!error) *dst = (src > 0) ? set21(0, 0, 0, src) : set21(MINUS, 0, 0, -src);
+  if (!error) *dst = (src >= 0) ? set21(0, 0, 0, src) : set21(MINUS, 0, 0, -src);
   return error;
 }
 
