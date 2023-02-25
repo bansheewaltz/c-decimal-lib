@@ -1,4 +1,4 @@
-#include "utils.h"
+#include "s21_decimal.h"
 
 int s21_floor(s21_decimal value, s21_decimal *result) {
   int error = (result) ? 0 : 1;
@@ -11,9 +11,12 @@ int s21_floor(s21_decimal value, s21_decimal *result) {
       int remainder = dellast(&work_value);
       notint = (notint) ? notint : remainder;
     }
-    if (notint && sign) addnum(&work_value, 1);
-    if (work_value.bits[3]) error = 1;
-    if (!error) *result = convert2s21(work_value, sign);
+    if (notint && sign)
+      addnum(&work_value, 1);
+    if (work_value.bits[3])
+      error = 1;
+    if (!error)
+      *result = convert2s21(work_value, sign);
   }
   return error;
 }

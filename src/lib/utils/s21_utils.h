@@ -1,5 +1,8 @@
 #ifndef S21_UTILS_H
 #define S21_UTILS_H
+#include <limits.h>
+#include <stdint.h>
+#include <stdio.h>
 
 #include "s21_decimal.h"
 

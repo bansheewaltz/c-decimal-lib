@@ -3,9 +3,9 @@ LIBNAME := s21_decimal
 BUILD := build
 OUT := output
 # paths
-SRC := src
+SRC := lib
 TST := testing
-INC := include# public header
+INC := $(SRC)/include# public header
 UTL := $(SRC)/utils
 BLD = $(BUILD)/$(CONFIG)
 OBJ = $(BLD)/obj

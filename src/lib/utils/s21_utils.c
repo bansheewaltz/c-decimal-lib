@@ -1,6 +1,4 @@
-#include "utils.h"
-
-#include <stdio.h>
+#include "s21_utils.h"
 
 int iszero(s21_decimal value) {
   return value.bits[0] == 0 && value.bits[1] == 0 && value.bits[2] == 0;
@@ -12,9 +10,13 @@ int iszerow(work_decimal value) {
   return res;
 }
 
-int isminus(s21_decimal value) { return (value.bits[3] & MINUS) == MINUS; }
+int isminus(s21_decimal value) {
+  return (value.bits[3] & MINUS) == MINUS;
+}
 
-void setplus(s21_decimal *value) { value->bits[3] &= NOTMINUS; }
+void setplus(s21_decimal *value) {
+  value->bits[3] &= NOTMINUS;
+}
 
 work_decimal convert2work(s21_decimal value) {
   work_decimal result;
@@ -33,9 +35,13 @@ s21_decimal convert2s21(work_decimal value, int sign) {
   return result;
 }
 
-uint64_t bitwithoutover(uint64_t bit) { return bit & MAX4BIT; }
+uint64_t bitwithoutover(uint64_t bit) {
+  return bit & MAX4BIT;
+}
 
-uint64_t getoverflow(uint64_t bit) { return bit >> 32; }
+uint64_t getoverflow(uint64_t bit) {
+  return bit >> 32;
+}
 
 uint64_t addolderbit(uint64_t smallerbit, uint64_t olderbit) {
   return smallerbit + (olderbit << 32);
@@ -48,7 +54,8 @@ unsigned int bits10up(work_decimal *value) {
     value->bits[i] = bitwithoutover(10 * foo.bits[i] + overflow);
     overflow = getoverflow(10 * foo.bits[i] + overflow);
   }
-  if (overflow) *value = foo;
+  if (overflow)
+    *value = foo;
   return overflow;
 }
 
@@ -105,7 +112,8 @@ int bankround(work_decimal value, unsigned int remander,
 int needdown(work_decimal value) {
   int need = 0;
   for (uint16_t i = 3; i < WORKBITS; ++i) need |= (value.bits[i] != 0);
-  if (need == 0) need = value.exp > MAXEXP;
+  if (need == 0)
+    need = value.exp > MAXEXP;
   return need;
 }
 
@@ -146,11 +154,13 @@ int normalize(work_decimal *value) {
   }
   while (needdown(*value) && value->exp > 0) {
     remainder = dellast(value);
-    if (remainder) countround++;
+    if (remainder)
+      countround++;
   }
   overflow = needdown(*value);
   if (bankround(*value, remainder, countround) && overflow == 0) {
-    if (addnum(value, 1)) overflow = 1;
+    if (addnum(value, 1))
+      overflow = 1;
     if (needdown(*value)) {
       if (value->exp > 0) {
         dellast(value);
@@ -159,7 +169,8 @@ int normalize(work_decimal *value) {
         overflow = 1;
     }
   }
-  if (!overflow) work2normal(value);
+  if (!overflow)
+    work2normal(value);
   return overflow;
 }
 
@@ -180,7 +191,8 @@ unsigned int addnum(work_decimal *value, uint16_t num) {
     overflow = getoverflow(foo.bits[i]);
     foo.bits[i] = bitwithoutover(foo.bits[i]);
   }
-  if (overflow == 0) *value = foo;
+  if (overflow == 0)
+    *value = foo;
   return overflow;
 }
 
@@ -298,7 +310,9 @@ void divtail(work_decimal v_1, work_decimal v_2, work_decimal *res) {
   }
 }
 
-int char2num(char c) { return c - '0'; }
+int char2num(char c) {
+  return c - '0';
+}
 
 s21_decimal set21(int bits3, int bits2, int bits1, int bits0) {
   s21_decimal value;

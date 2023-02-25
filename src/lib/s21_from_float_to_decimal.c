@@ -1,12 +1,14 @@
 #include <math.h>
 #include <stdio.h>
 
-#include "utils.h"
+#include "s21_decimal.h"
 
 int s21_from_float_to_decimal(float src, s21_decimal *dst) {
   int overflow = (dst) ? 0 : 1;
-  if (isnan(src)) overflow = 1;
-  if (!overflow) *dst = set21(0, 0, 0, 0);
+  if (isnan(src))
+    overflow = 1;
+  if (!overflow)
+    *dst = set21(0, 0, 0, 0);
   if (src && !overflow) {
     int sign = (src < 0) ? 1 : 0;
     src = fabs(src);

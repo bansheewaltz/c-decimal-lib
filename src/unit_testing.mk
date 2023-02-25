@@ -77,12 +77,11 @@ endif
 	mono $@
 
 
-gcov_report:
+gcov_report: $(T_EXES)
 ifeq ($(OS), Darwin)
-ifeq (, $(shell which gcov))
-	$(error "gcov" tool should be installed)
+ifeq (, $(shell which gcovr))
+	$(error "gcovr" tool should be installed)
 endif
-	$(MAKE) -f unit_testing.mk $(T_EXES)
 	@$(MK) $(COV_REP)
 	gcovr --html-details --html-self-contained -o $(COV_REP)/$(COV_REPORT) $(COV_INF)
 	open $(COV_REP)/$(COV_REPORT)

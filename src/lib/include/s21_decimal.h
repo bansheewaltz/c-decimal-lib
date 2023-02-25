@@ -1,21 +1,13 @@
 #ifndef S21_DECIMAL_H
 #define S21_DECIMAL_H
-
 #include <limits.h>
 #include <stdint.h>
 
+#include "s21_decimal_struct.h"
+#include "s21_utils.h"
+
 #define MAXEXP 28
 #define MAX2BIT 0xffff
-
-#if UINT_MAX > MAX2BIT
-typedef struct {
-  int bits[4];
-} s21_decimal;
-#else
-typedef struct {
-  int_fast32_t bits[4];
-} s21_decimal;
-#endif
 
 int s21_add(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);
 int s21_sub(s21_decimal value_1, s21_decimal value_2, s21_decimal *result);

@@ -1,9 +1,10 @@
-#include "utils.h"
+#include "s21_decimal.h"
 
 int s21_is_less(s21_decimal value_1, s21_decimal value_2) {
   int res = 0;
   if (iszero(value_1)) {
-    if (!iszero(value_2)) res = (isminus(value_2)) ? 0 : 1;
+    if (!iszero(value_2))
+      res = (isminus(value_2)) ? 0 : 1;
   } else if (iszero(value_2))
     res = (isminus(value_1)) ? 1 : 0;
   else {
