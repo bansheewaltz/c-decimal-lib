@@ -4,7 +4,6 @@
 #include <stdint.h>
 
 #include "s21_decimal_struct.h"
-#include "s21_utils.h"
 
 #define MAXEXP 28
 #define MAX2BIT 0xffff

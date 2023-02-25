@@ -19,6 +19,10 @@ TEST_GEN := $(BIN)/test_generator.exe
 # project files
 T_SRCS := $(SRCS:$(SRC)/s21_%.c=$(SRC_B)/%_test.c)
 T_EXES := $(SRCS:$(SRC)/s21_%.c=$(BIN)/%_test)
+# compilation parameters
+CCOVFLAGS := --coverage
+LDFLAGS += $(shell pkg-config --cflags check)
+LDLIBS += $(shell pkg-config --libs check)
 
 
 test: $(T_EXES)
@@ -28,16 +32,16 @@ test: $(T_EXES)
 
 $(BIN)/%_test: $(OBJ)/s21_%.o $(OBJ)/%_test.o | $(COV_INF) $(REPORTS) $(CASES_B)
 	$(dir_guard)
-	$(CC) --coverage $^ $(LIBS) $(LDFLAGS) -o $@
+	$(CC) $(CCOVFLAGS) $^ $(LDLIBS) -o $@
 	(cd $(BIN) && ./$(@F) && echo) >> $(TST_REPORT_R)
 	-mv $(OBJ)/*.{gcno,gcda} $(COV_INF)
 
 $(OBJ)/s21_%.o: $(SRC)/s21_%.c | $(OBJ)
-	$(CC) -c $(INCS) $(CFLAGS) --coverage $< -o $@
+	$(CC) -c $(LDFLAGS) $(CFLAGS) $(CCOVFLAGS) $< -o $@
 
-$(OBJ)/%_test.o: INCS += -I $(T_INC)# speicifies a target-specific variable
+$(OBJ)/%_test.o: LDFLAGS += -I $(T_INC)# speicifies a target-specific variable
 $(OBJ)/%_test.o: $(SRC_B)/%_test.c | $(OBJ)
-	$(CC) -c $(INCS) $(LDFLAGS) $< -o $@
+	$(CC) -c $(LDFLAGS) $< -o $@
 
 $(SRC_B)/%_test.c: $(CHK_B)/%_test.check
 	$(dir_guard)
@@ -47,7 +51,7 @@ $(SRC_B)/%_test.c: $(CHK_B)/%_test.check
 $(CHK_B)/%_test.check: $(CHK_T)/%_test.check $(CASES_T)/bin/%.bin
 	$(dir_guard)
 	cp $< $(@D)
-ifeq ($(OS), Darwin)
+ifeq ($(OS), macOS)
 	sed -i "" 's/PLACEHOLDER/$(shell expr $(shell wc -l < $(shell find $(CASES_T)/txt -name $*.txt)) - 2)/g' $@
 else
 	sed -i 's/PLACEHOLDER/$(shell expr $(shell wc -l < $(shell find $(CASES_T)/txt -name $*.txt)) - 2)/g' $@	
@@ -78,15 +82,14 @@ endif
 
 
 gcov_report: $(T_EXES)
-ifeq ($(OS), Darwin)
 ifeq (, $(shell which gcovr))
 	$(error "gcovr" tool should be installed)
 endif
 	@$(MK) $(COV_REP)
 	gcovr --html-details --html-self-contained -o $(COV_REP)/$(COV_REPORT) $(COV_INF)
+ifeq ($(OS), macOS)
 	open $(COV_REP)/$(COV_REPORT)
-else
-	@echo "gcov_report rule is ready only for macOS"
 endif
+
 
 .PHONY: test generate_tests gcov_report

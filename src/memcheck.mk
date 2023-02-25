@@ -22,7 +22,6 @@ VALGRIND_FLAGS := valgrind
 CK_FORK=no
 # filenames specification
 REPORT := $(OUT)/memcheck_raw.txt
-SHELL := /bin/bash
 export# exports environment variables to subshells and scripts
 
 # memcheck: $(REPORT)

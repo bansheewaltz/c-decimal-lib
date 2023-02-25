@@ -6,7 +6,7 @@ RST="\033[0m"
 
 # start docker if is not running yet
 if ! pgrep -x "Docker" >/dev/null; then
-  if [ "$OS" = 'Darwin' ]; then
+  if [ "$OS" = 'macOS' ]; then
     echo "Starting Docker app..."
     open -a Docker
     sleep 10
@@ -28,7 +28,7 @@ container_name="${image_os}_container"
 if [ "$(docker ps -a -q -f name=$container_name)" ]; then
   docker start -i $container_name
 else
-  dockerfile="dockerfile.$image_os"
+  dockerfile="Dockerfile.$image_os"
   image="dondarri/$image_os"
   prompt="$CLR$image_os@container$RST:\W$ "
   command="echo \"export PS1='$prompt'\" >> ~/.bashrc && bash"
@@ -38,7 +38,7 @@ else
     --name "$container_name" \
     -e PS1="$prompt" \
     -v $PWD:/usr/project \
-    -w /usr/project/ \
+    -w /usr/project \
     $image \
     bash -c "$command"
 fi

@@ -1,4 +1,5 @@
 #include "s21_decimal.h"
+#include "s21_utils.h"
 
 int s21_truncate(s21_decimal value, s21_decimal *result) {
   int error = (result) ? 0 : 1;
