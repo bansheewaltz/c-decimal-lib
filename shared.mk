@@ -16,7 +16,7 @@ SCRIPTS := $(TST)/scripts
 # project files
 SRCS := $(wildcard $(SRC)/*.c)
 UTLS := $(wildcard $(UTL)/*.c)
-OBJS = $(SRCS:$(SRC)/%.c=$(OBJ)/%.o)
+OBJS = $(SRCS:$(SRC)/%.c=$(OBJ)/%.o) $(UTLS:$(UTL)/%.c=$(OBJ)/%.o)
 # compilation parameters
 CC := gcc
 WFLAGS := -Wall -Werror -Wextra
@@ -51,12 +51,21 @@ clean:
 	$(RM) $(OUT)
 	$(RM) $(SRC)/*.a
 	@$(RM) *.a
+clean_build:
+	$(RM) $(BUILD)
+	$(RM) $(OUT)/*.a
 
 re: clean
 	$(MAKE) all
 
 linter:
 	clang-format -style=Google -i $(shell find . -type f -name '*.h' -o -name '*.c' -o -name '*.cs')
+linter_check:
+	clang-format -style=Google -n $(shell find . -type f -name '*.h' -o -name '*.c' -o -name '*.cs')
 
-docker: clean
+docker:
+ifeq (, $(shell which docker))
+	$(error "Docker" should be installed)
+endif
+	$(MAKE) clean_build
 	bash $(SCRIPTS)/run_docker_image.sh

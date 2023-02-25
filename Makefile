@@ -5,8 +5,8 @@ include shared.mk
 INC0 := $(INC) $(UTL)
 INCS := $(INC0:%=-I %)
 HDRS := $(shell find $(INC0) -name *.h)
-vpath %.c $(SRC)
-export INCS
+vpath %.c $(SRC) $(UTL)
+export
 
 
 all:
@@ -43,4 +43,4 @@ memcheck: lib
 	$(MAKE) -s -f memcheck.mk $@
 
 miniverter: clean
-	cd materials/build && bash run.sh
+	cd $(SCRIPTS) && bash run_miniverter.sh

@@ -13,6 +13,7 @@ COV_REP := $(REPORTS)/coverage_report
 COV_INF := $(BLD)/coverage_info
 # filenames specification
 TST_REPORT := $(REPORTS)/tests_report.txt
+TST_REPORT_R := $(REPORTS)/tests_report_raw.txt
 COV_REPORT := gcov_report.html
 TEST_GEN := $(BIN)/test_generator.exe
 # project files
@@ -21,21 +22,18 @@ T_EXES := $(SRCS:$(SRC)/s21_%.c=$(BIN)/%_test)
 
 
 test: $(T_EXES)
-	bash $(SCRIPTS)/format_report.sh $(REPORTS)
-	cat $(TST_REPORT)
-	@printf '=%.0s' {1..97} | xargs printf '%s\n' >> $(REPORTS)/tests_report_raw.txt
+	bash $(SCRIPTS)/format_report.sh $(TST_REPORT_R) $(TST_REPORT)
+	@echo '\n\n' && cat $(TST_REPORT)
+	@printf '=%.0s' {1..97} | xargs printf '%s\n' >> $(TST_REPORT_R)
 
-$(BIN)/%_test: $(OBJ)/s21_%.o $(OBJ)/utils.o $(OBJ)/%_test.o | $(COV_INF) $(REPORTS) $(CASES_B)
+$(BIN)/%_test: $(OBJ)/s21_%.o $(OBJ)/%_test.o | $(COV_INF) $(REPORTS) $(CASES_B)
 	$(dir_guard)
 	$(CC) --coverage $^ $(LIBS) $(LDFLAGS) -o $@
-	(cd $(BIN) && ./$(@F) && echo) >> $(REPORTS)/tests_report_raw.txt
+	(cd $(BIN) && ./$(@F) && echo) >> $(TST_REPORT_R)
 	-mv $(OBJ)/*.{gcno,gcda} $(COV_INF)
 
 $(OBJ)/s21_%.o: $(SRC)/s21_%.c | $(OBJ)
 	$(CC) -c $(INCS) $(CFLAGS) --coverage $< -o $@
-
-$(OBJ)/utils.o: $(UTLS) | $(OBJ)
-	$(CC) -c $(INCS) $(CFLAGS) $< -o $@
 
 $(OBJ)/%_test.o: INCS += -I $(T_INC)# speicifies a target-specific variable
 $(OBJ)/%_test.o: $(SRC_B)/%_test.c | $(OBJ)
@@ -67,22 +65,29 @@ $(CASES_B):
 	@$(MK) $@
 	cp $(CASES_T)/bin/* $@
 
-# generates tests with program written in C#
+# generates tests with a program written in C#
 ## "mono" framework should be installed for compilation and execution
-generate_tests: $(TEST_GEN)
+generate_tests:$(TEST_GEN)
 $(BIN)/%.exe: $(SRC_T)/%.cs
+ifeq (, $(shell which mono))
+	$(error "mono" framework should be installed)
+endif
 	$(dir_guard)
 	mcs $< -out:$@
 	mono $@
 
 
-gcov_report: $(T_EXES)
-	@$(MK) $(COV_REP)
+gcov_report:
 ifeq ($(OS), Darwin)
+ifeq (, $(shell which gcov))
+	$(error "gcov" tool should be installed)
+endif
+	$(MAKE) -f unit_testing.mk $(T_EXES)
+	@$(MK) $(COV_REP)
 	gcovr --html-details --html-self-contained -o $(COV_REP)/$(COV_REPORT) $(COV_INF)
 	open $(COV_REP)/$(COV_REPORT)
 else
-	#???
+	@echo "gcov_report rule is ready only for macOS"
 endif
 
 .PHONY: test generate_tests gcov_report

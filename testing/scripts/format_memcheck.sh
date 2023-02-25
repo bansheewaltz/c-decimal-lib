@@ -1,1 +1,1 @@
-grep lost output/memcheck_raw.txt > output/memcheck.txt
+grep "in use at exit" output/memcheck_raw.txt > output/memcheck.txt

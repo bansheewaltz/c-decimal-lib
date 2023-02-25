@@ -1,10 +1,10 @@
 #!/bin/bash
 
-# setting colors
+# set colors
 CLR="\033[38;5;117m"
 RST="\033[0m"
 
-# starts docker if is not running yet
+# start docker if is not running yet
 if ! pgrep -x "Docker" >/dev/null; then
   if [ "$OS" = 'Darwin' ]; then
     echo "Starting Docker app..."
@@ -16,30 +16,31 @@ if ! pgrep -x "Docker" >/dev/null; then
   fi
 fi
 
-# setting default IMAGE if another is not specified
-if test -z "$IMAGE"; then
-  IMAGE_OS="ubuntu"
+# set default image if another is not specified
+if test -z "$image"; then
+  image_os="ubuntu"
 else
-  IMAGE_OS="$IMAGE"
+  image_os="$image"
 fi
 
-
-CONTAINER_NAME="${IMAGE_OS}_container"
-if [ "$(docker ps -a -q -f name=$CONTAINER_NAME)" ]; then
-  docker start -i $CONTAINER_NAME
-  exit 0
+container_name="${image_os}_container"
+# run existing container or build a new one otherwise
+if [ "$(docker ps -a -q -f name=$container_name)" ]; then
+  docker start -i $container_name
 else
-  DOCKERFILE="Dockerfile.$IMAGE_OS"
-  IMAGE="dondarri/$IMAGE_OS"
-  PROMPT="$CLR$IMAGE_OS@container$RST:\W$ "
-  COMMAND="echo \"export PS1='$PROMPT'\" >> ~/.bashrc && bash"
+  dockerfile="dockerfile.$image_os"
+  image="dondarri/$image_os"
+  prompt="$CLR$image_os@container$RST:\W$ "
+  command="echo \"export PS1='$prompt'\" >> ~/.bashrc && bash"
 
-  docker build -t $IMAGE -f $SCRIPTS/$DOCKERFILE .
+  docker build -t $image -f $SCRIPTS/$dockerfile .
   docker run -it \
-    --name "$CONTAINER_NAME" \
-    -e PS1="$PROMPT" \
+    --name "$container_name" \
+    -e PS1="$prompt" \
     -v $PWD:/usr/project \
     -w /usr/project/ \
-    $IMAGE \
-    bash -c "$COMMAND"
+    $image \
+    bash -c "$command"
 fi
+
+make clean_build

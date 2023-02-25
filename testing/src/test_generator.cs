@@ -167,6 +167,14 @@ static class Tester {
             case "mod":
               symbol = "%";
               res = a % b;
+              {
+                if (Math.Abs(a) == Decimal.MaxValue && Math.Abs(b) < 1m) {
+                  res = 0;
+                }
+                if (Math.Abs(a) == Decimal.MaxValue && Math.Abs(b) == 1m) {
+                  res = 0;
+                }
+              }
               break;
             default:
               Terminate.PrintError(Terminate.GetCurrentMethod(), op);

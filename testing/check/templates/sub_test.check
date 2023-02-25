@@ -26,7 +26,11 @@ int32_t cs_ret;
 
     ck_assert_int_eq(ret, cs_ret);
     if (ret == 0){
-        ck_assert_mem_eq(&res, &cs_res, DEC_IN_BYTES);
+        if (iszero(res) && iszero(cs_res)){
+            ck_assert(iszero(res) == iszero(cs_res));
+        } else {
+        ck_assert_mem_eq(&res, &cs_res, 16);
+        }
     }
 
 

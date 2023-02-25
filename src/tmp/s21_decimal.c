@@ -108,9 +108,11 @@ int s21_mod(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     overflow = 3;
   else if (!overflow) {
     int sign = isminus(value_1);
-    value_1 = s21normal(value_1); value_2 = s21normal(value_2);
+    value_1 = s21normal(value_1);
+    value_2 = s21normal(value_2);
     s21_decimal foo = value_1;
-    setplus(&foo); setplus(&value_2);
+    setplus(&foo);
+    setplus(&value_2);
     if (s21_is_less(foo, value_2))
       *result = value_1;
     else {
@@ -183,7 +185,8 @@ int s21_is_not_equal(s21_decimal value_1, s21_decimal value_2) {
 
 int s21_from_int_to_decimal(int src, s21_decimal *dst) {
   int error = (dst) ? 0 : 1;
-  if (!error) *dst = (src >= 0) ? set21(0, 0, 0, src) : set21(MINUS, 0, 0, -src);
+  if (!error)
+    *dst = (src >= 0) ? set21(0, 0, 0, src) : set21(MINUS, 0, 0, -src);
   return error;
 }
 

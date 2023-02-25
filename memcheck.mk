@@ -19,19 +19,22 @@ INCS += -I $(T_INC)
 CFLAGS = -g
 # VALGRIND_FLAGS := valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s
 VALGRIND_FLAGS := valgrind
+CK_FORK=no
 # filenames specification
 REPORT := $(OUT)/memcheck_raw.txt
+SHELL := /bin/bash
 export# exports environment variables to subshells and scripts
 
 # memcheck: $(REPORT)
 # $(REPORT): $(T_EXES)
 memcheck: $(T_EXES)
-	bash $(SCRIPTS)/format_memcheck.sh
-	@echo "Check report at \"output\" folder"
-$(BIN)/%_test: $(SRC)/s21_%.c $(SRC_B)/%_test.c $(UTLS) | $(CASES_B) $(OUT)
+	# bash $(SCRIPTS)/format_memcheck.sh
+	# @echo "\n\nCheck report at \"output\" folder"
+$(BIN)/%_test: $(SRC)/s21_%.c $(SRC_B)/%_test.c | $(CASES_B) $(OUT)
 	$(dir_guard)
 	$(CC) $(INCS) $(CFLAGS) $^ $(LIBS) $(LDFLAGS) -o $@
-	(cd $(BIN) && $(VALGRIND_FLAGS) ./$(@F) && echo) 2>> $(REPORT)
+	#(cd $(BIN) && echo && $(VALGRIND_FLAGS) ./$(@F)) 2>> $(REPORT)
+	(cd $(BIN) && echo && $(VALGRIND_FLAGS) ./$(@F)) 2> >(grep "at exit")
 
 $(SRC_B)/%_test.c: $(CHK_T)/%_test.check | $(CHK_B)
 	$(dir_guard)
