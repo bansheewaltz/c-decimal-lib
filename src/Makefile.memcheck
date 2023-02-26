@@ -1,7 +1,7 @@
 CONFIG := memcheck
 NUMBER_OF_TESTS := 10
 ### some variables and targets are stored in a shared makefile
-include shared.mk
+include Makefile.common
 # paths
 CHK_T := $(TST)/check/templates
 CHK_B := $(BLD)/check

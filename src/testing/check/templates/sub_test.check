@@ -34,6 +34,11 @@ int32_t cs_ret;
     }
 
 
+#test null
+    ret = s21_sub(a, b, NULL);
+    ck_assert_int_eq(ret, 4);
+
+
 #main-pre
     file_ptr = fopen(FILE_PATH, "rb");
     if (file_ptr == NULL){

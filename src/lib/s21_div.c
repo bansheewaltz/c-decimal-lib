@@ -4,7 +4,7 @@
 int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   int overflow = (result) ? 0 : 4;
   int sign = (isminus(value_1) == isminus(value_2)) ? 0 : 1;
-  if (iszero(value_2))
+  if (iszero(value_2) && overflow == 0)
     overflow = 3;
   else if (iszero(value_1) && !overflow)
     *result = set21(0, 0, 0, 0);
@@ -18,7 +18,8 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     }
     if (compearbits(v_1, shiftleft(v_2, 96)) < 0) {
       v_1 = divmain(v_1, v_2, &res);
-      if (!iszerow(v_1)) divtail(v_1, v_2, &res);
+      if (!iszerow(v_1))
+        divtail(v_1, v_2, &res);
     } else
       overflow = (sign) ? 2 : 1;
     if (overflow == 0) {

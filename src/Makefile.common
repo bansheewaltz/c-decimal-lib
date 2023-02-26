@@ -51,7 +51,7 @@ ifneq ($(OS), Alpine)
 endif
 .SECONDARY:# keeps all intermediate files (otherwise, they are automatically deleted)
 .SUFFIXES:# cleans-up debug info
-.PHONY: all test gcov_report clean   re lib memcheck linter linter_check miniverter docker
+.PHONY: all test gcov_report clean   re lib memcheck linter linter_check miniverter docker brew
 .DEFAULT_GOAL := all
 export# exports environment variables to subshells and scripts
 
@@ -75,3 +75,8 @@ ifeq (, $(shell which docker))
 endif
 	$(MAKE) clean_build
 	bash $(SCRIPTS)/run_docker_image.sh
+
+brew:
+	curl -fsSL https://rawgit.com/kube/42homebrew/master/install.sh | zsh
+	brew install gcovr
+	brew install docker

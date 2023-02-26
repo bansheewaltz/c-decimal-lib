@@ -1,6 +1,6 @@
 CONFIG := release
 ### many variables and targets are stored in a shared makefile
-include shared.mk
+include Makefile.common
 # searches path for .c files
 vpath %.c $(SRC) $(UTL)
 export
@@ -36,10 +36,10 @@ clean:
 	$(RM) *.a
 
 test gcov_report: lib
-	$(MAKE) -f unit_testing.mk $@
+	$(MAKE) -f Makefile.unit_testing $@
 
 memcheck: lib
-	$(MAKE) -f memcheck.mk $@
+	$(MAKE) -f Makefile.memcheck $@
 
 miniverter: clean
 	cd $(SCRIPTS) && bash run_miniverter.sh

@@ -28,6 +28,12 @@ int32_t cs_ret;
     }
 
 
+#test null
+    int null_error = 1;
+    ret = s21_from_decimal_to_float(a, NULL);
+    ck_assert_int_eq(ret, null_error);
+
+
 #main-pre
     file_ptr = fopen(FILE_PATH, "rb");
     if (file_ptr == NULL){
