@@ -77,7 +77,7 @@ int s21_mul(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   int overflow = (result) ? 0 : 4;
   int sign = (isminus(value_1) == isminus(value_2)) ? 0 : 1;
-  if (iszero(value_2))
+  if (iszero(value_2) && overflow == 0)
     overflow = 3;
   else if (iszero(value_1) && !overflow)
     *result = set21(0, 0, 0, 0);
@@ -104,7 +104,7 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 
 int s21_mod(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
   int overflow = (result) ? 0 : 4;
-  if (iszero(value_2))
+  if (iszero(value_2) && overflow == 0)
     overflow = 3;
   else if (!overflow) {
     int sign = isminus(value_1);
@@ -262,8 +262,7 @@ int s21_floor(s21_decimal value, s21_decimal *result) {
       notint = (notint) ? notint : remainder;
     }
     if (notint && sign) addnum(&work_value, 1);
-    if (work_value.bits[3]) error = 1;
-    if (!error) *result = convert2s21(work_value, sign);
+    *result = convert2s21(work_value, sign);
   }
   return error;
 }
@@ -275,10 +274,13 @@ int s21_round(s21_decimal value, s21_decimal *result) {
   else if (!error) {
     int sign = isminus(value), remainder = 0;
     work_decimal work_value = convert2work(value);
-    while (work_value.exp) remainder = dellast(&work_value);
-    if (remainder > 4) addnum(&work_value, 1);
-    if (work_value.bits[3]) error = 1;
-    if (!error) *result = convert2s21(work_value, sign);
+    unsigned int countround = 0;
+    while (work_value.exp) {
+      remainder = dellast(&work_value);
+      if (remainder) countround++;
+    }
+    if (bankround(work_value, remainder, countround)) addnum(&work_value, 1);
+    *result = convert2s21(work_value, sign);
   }
   return error;
 }
