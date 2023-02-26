@@ -78,5 +78,3 @@ endif
 
 brew:
 	curl -fsSL https://rawgit.com/kube/42homebrew/master/install.sh | zsh
-	brew install gcovr
-	brew install docker

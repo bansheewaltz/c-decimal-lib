@@ -1,9 +1,9 @@
 .vscode
 .DS_Store
+**/*.a
 src/build
 tmp.mk
 tmp
-src/output/*.a
 
 # Prerequisites
 *.d
