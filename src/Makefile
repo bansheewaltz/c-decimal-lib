@@ -39,7 +39,7 @@ test gcov_report: lib
 	$(MAKE) -f Makefile.unit_testing $@
 
 memcheck: lib
-	$(MAKE) -f Makefile.memcheck $@
+	$(MAKE) -s -f Makefile.memcheck $@
 
 miniverter: clean
 	cd $(SCRIPTS) && bash run_miniverter.sh

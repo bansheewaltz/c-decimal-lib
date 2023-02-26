@@ -27,7 +27,7 @@ LDLIBS += $(shell pkg-config --libs check)
 
 test: $(T_EXES)
 	bash $(SCRIPTS)/format_report.sh $(TST_REPORT_R) $(TST_REPORT)
-	@echo '\n\n' && cat $(TST_REPORT)
+	@echo -e '\n\n' && cat $(TST_REPORT)
 	@printf '=%.0s' {1..97} | xargs printf '%s\n' >> $(TST_REPORT_R)
 
 $(BIN)/%_test: $(OBJ)/s21_%.o $(OBJ)/%_test.o | $(COV_INF) $(REPORTS) $(CASES_B)
