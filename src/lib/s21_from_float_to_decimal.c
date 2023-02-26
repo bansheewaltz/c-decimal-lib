@@ -1,7 +1,6 @@
 #include <math.h>
 #include <stdio.h>
 
-#include "s21_decimal.h"
 #include "s21_utils.h"
 
 int s21_from_float_to_decimal(float src, s21_decimal *dst) {

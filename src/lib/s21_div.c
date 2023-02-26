@@ -1,4 +1,3 @@
-#include "s21_decimal.h"
 #include "s21_utils.h"
 
 int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
@@ -18,8 +17,7 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     }
     if (compearbits(v_1, shiftleft(v_2, 96)) < 0) {
       v_1 = divmain(v_1, v_2, &res);
-      if (!iszerow(v_1))
-        divtail(v_1, v_2, &res);
+      if (!iszerow(v_1)) divtail(v_1, v_2, &res);
     } else
       overflow = (sign) ? 2 : 1;
     if (overflow == 0) {
