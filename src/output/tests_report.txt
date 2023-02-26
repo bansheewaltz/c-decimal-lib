@@ -47,8 +47,7 @@ Running suite(s): negate
 100%: Checks: 501, Failures: 0, Errors: 0
 
 Running suite(s): round
-99%: Checks: 501, Failures: 1, Errors: 0
-	443:  &res = "4d94673aeac1e4fcc7f4f20100000080", &cs_res = "4c94673aeac1e4fcc7f4f20100000080"
+100%: Checks: 501, Failures: 0, Errors: 0
 
 Running suite(s): sub
 100%: Checks: 626, Failures: 0, Errors: 0

@@ -2,7 +2,7 @@
 
 #include <math.h>
 
-#include "utils.h"
+#include "s21_utils.h"
 
 int s21_negate(s21_decimal value, s21_decimal *result) {
   int error = (result) ? 0 : 1;
@@ -91,7 +91,8 @@ int s21_div(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
     }
     if (compearbits(v_1, shiftleft(v_2, 96)) < 0) {
       v_1 = divmain(v_1, v_2, &res);
-      if (!iszerow(v_1)) divtail(v_1, v_2, &res);
+      if (!iszerow(v_1))
+        divtail(v_1, v_2, &res);
     } else
       overflow = (sign) ? 2 : 1;
     if (overflow == 0) {
@@ -124,7 +125,8 @@ int s21_mod(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
       } else {
         for (uint16_t i = 0; i < v_1.exp - v_2.exp; ++i) bits10up(&v_2);
       }
-      if (compearbits(v_1, shiftleft(v_2, 96)) < 0) res = divremain(v_1, v_2);
+      if (compearbits(v_1, shiftleft(v_2, 96)) < 0)
+        res = divremain(v_1, v_2);
       overflow = normalize(&res);
       *result = convert2s21(res, sign);
     }
@@ -135,7 +137,8 @@ int s21_mod(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
 int s21_is_less(s21_decimal value_1, s21_decimal value_2) {
   int res = 0;
   if (iszero(value_1)) {
-    if (!iszero(value_2)) res = (isminus(value_2)) ? 0 : 1;
+    if (!iszero(value_2))
+      res = (isminus(value_2)) ? 0 : 1;
   } else if (iszero(value_2))
     res = (isminus(value_1)) ? 1 : 0;
   else {
@@ -174,7 +177,8 @@ int s21_is_equal(s21_decimal value_1, s21_decimal value_2) {
   else if (isminus(value_1) == isminus(value_2)) {
     work_decimal v_1 = convert2work(value_1), v_2 = convert2work(value_2);
     pointequalize(&v_1, &v_2);
-    if (compearbits(v_1, v_2) == 0) res = 1;
+    if (compearbits(v_1, v_2) == 0)
+      res = 1;
   }
   return res;
 }
@@ -206,8 +210,10 @@ int s21_from_decimal_to_int(s21_decimal src, int *dst) {
 
 int s21_from_float_to_decimal(float src, s21_decimal *dst) {
   int overflow = (dst) ? 0 : 1;
-  if (isnan(src)) overflow = 1;
-  if (!overflow) *dst = set21(0, 0, 0, 0);
+  if (isnan(src))
+    overflow = 1;
+  if (!overflow)
+    *dst = set21(0, 0, 0, 0);
   if (src && !overflow) {
     int sign = (src < 0) ? 1 : 0;
     src = fabs(src);
@@ -261,7 +267,8 @@ int s21_floor(s21_decimal value, s21_decimal *result) {
       int remainder = dellast(&work_value);
       notint = (notint) ? notint : remainder;
     }
-    if (notint && sign) addnum(&work_value, 1);
+    if (notint && sign)
+      addnum(&work_value, 1);
     *result = convert2s21(work_value, sign);
   }
   return error;
@@ -277,9 +284,11 @@ int s21_round(s21_decimal value, s21_decimal *result) {
     unsigned int countround = 0;
     while (work_value.exp) {
       remainder = dellast(&work_value);
-      if (remainder) countround++;
+      if (remainder)
+        countround++;
     }
-    if (bankround(work_value, remainder, countround)) addnum(&work_value, 1);
+    if (bankround(work_value, remainder, countround))
+      addnum(&work_value, 1);
     *result = convert2s21(work_value, sign);
   }
   return error;
