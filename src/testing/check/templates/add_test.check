@@ -15,6 +15,7 @@ s21_decimal res;
 s21_decimal cs_res;
 int32_t ret;
 int32_t cs_ret;
+int null_error = 4;
 
 #suite add
 #test-loop(0, PLACEHOLDER) iterate_file
@@ -33,6 +34,24 @@ int32_t cs_ret;
 #test null
     ret = s21_add(a, b, NULL);
     ck_assert_int_eq(ret, 4);
+
+#test zero_a_null
+    a = set21(0, 0, 0, 0);
+    ret = s21_add(a, b, NULL);
+    ck_assert_int_eq(ret, null_error);
+
+
+#test zero_b_null
+    b = set21(0, 0, 0, 0);
+    ret = s21_add(a, b, NULL);
+    ck_assert_int_eq(ret, null_error);
+
+
+#test zero_a_b_null
+    a = set21(0, 0, 0, 0);
+    b = set21(0, 0, 0, 0);
+    ret = s21_add(a, b, NULL);
+    ck_assert_int_eq(ret, null_error);
 
 
 #main-pre
