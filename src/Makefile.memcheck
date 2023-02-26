@@ -30,7 +30,7 @@ export# exports environment variables to subshells and scripts
 # $(MEM_REPORT_R): $(T_EXES)
 memcheck: $(T_EXES)
 	bash $(SCRIPTS)/format_memcheck.sh
-	cat $(MEM_REPORT)
+	@echo -e "\n\n" && cat $(MEM_REPORT)
 	@echo -e "\n\nCheck raw report at \"output\" folder"
 
 $(BIN)/%_test:: LDFLAGS += -I $(T_INC)
