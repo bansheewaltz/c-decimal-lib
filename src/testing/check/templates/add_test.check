@@ -32,19 +32,45 @@ int null_error = 4;
 
 
 #test null
+    a = set21(0, 1, 1, 1);
+    b = set21(0, 1, 1, 1);
     ret = s21_add(a, b, NULL);
-    ck_assert_int_eq(ret, 4);
+    ck_assert_int_eq(ret, null_error);
+
+
+#test zero_a
+    a = set21(0, 0, 0, 0);
+    b = set21(0, 1, 1, 1);
+    ret = s21_add(a, b, &res);
+    ck_assert_int_ne(ret, null_error);
+
 
 #test zero_a_null
     a = set21(0, 0, 0, 0);
+    b = set21(0, 1, 1, 1);
     ret = s21_add(a, b, NULL);
     ck_assert_int_eq(ret, null_error);
+
+
+#test zero_b
+    a = set21(0, 1, 1, 1);
+    b = set21(0, 0, 0, 0);
+    ret = s21_add(a, b, &res);
+    ck_assert_int_ne(ret, null_error);
 
 
 #test zero_b_null
+    a = set21(0, 1, 1, 1);
     b = set21(0, 0, 0, 0);
     ret = s21_add(a, b, NULL);
     ck_assert_int_eq(ret, null_error);
+
+
+#test zero_a_b
+    a = set21(0, 0, 0, 0);
+    b = set21(0, 0, 0, 0);
+    ret = s21_add(a, b, &res);
+    ck_assert_int_ne(ret, null_error);
 
 
 #test zero_a_b_null
