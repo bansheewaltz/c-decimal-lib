@@ -5,19 +5,19 @@ Running suite(s): div
 100%: Checks: 626, Failures: 0, Errors: 0
 
 Running suite(s): floor
-100%: Checks: 201, Failures: 0, Errors: 0
+100%: Checks: 501, Failures: 0, Errors: 0
 
 Running suite(s): from_decimal_to_float
-100%: Checks: 201, Failures: 0, Errors: 0
+100%: Checks: 501, Failures: 0, Errors: 0
 
 Running suite(s): from_decimal_to_int
-100%: Checks: 201, Failures: 0, Errors: 0
+100%: Checks: 501, Failures: 0, Errors: 0
 
 Running suite(s): from_float_to_decimal
-100%: Checks: 201, Failures: 0, Errors: 0
+100%: Checks: 501, Failures: 0, Errors: 0
 
 Running suite(s): from_int_to_decimal
-100%: Checks: 201, Failures: 0, Errors: 0
+100%: Checks: 501, Failures: 0, Errors: 0
 
 Running suite(s): is_equal
 100%: Checks: 625, Failures: 0, Errors: 0
@@ -44,15 +44,16 @@ Running suite(s): mul
 100%: Checks: 332, Failures: 0, Errors: 0
 
 Running suite(s): negate
-100%: Checks: 201, Failures: 0, Errors: 0
+100%: Checks: 501, Failures: 0, Errors: 0
 
 Running suite(s): round
-100%: Checks: 201, Failures: 0, Errors: 0
+99%: Checks: 501, Failures: 1, Errors: 0
+build/unit_testing/src/round_test.c:33:F:round:iterate_file:443: Assertion '&res == &cs_res' failed: &res == "4d94673aeac1e4fcc7f4f20100000080", &cs_res == "4c94673aeac1e4fcc7f4f20100000080"
 
 Running suite(s): sub
 100%: Checks: 626, Failures: 0, Errors: 0
 
 Running suite(s): truncate
-100%: Checks: 201, Failures: 0, Errors: 0
+100%: Checks: 501, Failures: 0, Errors: 0
 
 =================================================================================================
