@@ -1,0 +1,58 @@
+CONFIG := memcheck
+NUMBER_OF_TESTS := 100
+### some variables and targets are stored in a shared makefile
+include Makefile.common
+# paths
+CHK_T := $(TST)/check/templates
+CHK_B := $(BLD)/check
+SRC_T := $(TST)/src
+SRC_B := $(BLD)/src
+T_INC := $(TST)/headers
+CASES_T := $(TST)/cases
+CASES_B := $(BLD)/bin/cases
+SCRIPTS := $(TST)/scripts
+# project files
+T_SRCS := $(SRCS:$(SRC)/s21_%.c=$(SRC_B)/%_test.c)
+T_EXES := $(SRCS:$(SRC)/s21_%.c=$(BIN)/%_test)
+# compilation parameters
+CFLAGS = -g
+LDFLAGS += $(shell pkg-config --cflags check)
+LDLIBS += $(shell pkg-config --libs check)
+# VALGRIND_FLAGS := valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s
+VALGRIND_FLAGS := valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s
+CK_FORK=no
+# filenames specification
+MEM_REPORT_R := $(OUT)/memcheck_raw.txt
+MEM_REPORT := $(OUT)/memcheck.txt
+export# exports environment variables to subshells and scripts
+
+# memcheck: $(MEM_REPORT_R)
+# $(MEM_REPORT_R): $(T_EXES)
+memcheck: $(T_EXES)
+	bash $(SCRIPTS)/format_memcheck.sh
+	@echo -e "\n\n" && cat $(MEM_REPORT)
+	@echo -e "\n\nCheck raw report at \"output\" folder"
+
+$(BIN)/%_test:: LDFLAGS += -I $(T_INC)
+$(BIN)/%_test: $(SRC)/s21_%.c $(SRC_B)/%_test.c | $(CASES_B) $(OUT)
+	$(dir_guard)
+	$(CC) $(LDFLAGS) $(CFLAGS) $^ $(LDLIBS) -o $@
+	(cd $(BIN) && echo && $(VALGRIND_FLAGS) ./$(@F)) 2>> $(MEM_REPORT_R)
+	# (cd $(BIN) && echo && $(VALGRIND_FLAGS) ./$(@F)) 2> >(grep "at exit")
+
+$(SRC_B)/%_test.c: $(CHK_T)/%_test.check | $(CHK_B)
+	$(dir_guard)
+	sed 's/PLACEHOLDER/$(NUMBER_OF_TESTS)/g' $< > $(CHK_B)/$(<F)
+	checkmk clean_mode=1 $(CHK_B)/$(<F) > $@
+	$(format_the_file)
+
+$(CHK_B):
+	@$(MK) $@
+$(OUT):
+	@$(MK) $@
+$(CASES_B):
+	@$(MK) $@
+	cp $(CASES_T)/bin/* $@
+
+
+.PHONY: memcheck

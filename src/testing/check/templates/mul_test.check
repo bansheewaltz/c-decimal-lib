@@ -1,0 +1,96 @@
+#include "tests_includes.h"
+
+/* changable variables */
+#define FILE_PATH "cases/mul.bin"
+#define NUMBER_OF_TESTS PLACEHOLDER
+#define RECORD_SIZE_BYTES (16 * 2 + 4 + 16)
+#define BUFFER_SIZE_BYTES (RECORD_SIZE_BYTES * NUMBER_OF_TESTS)
+
+
+char buffer[BUFFER_SIZE_BYTES];
+FILE* file_ptr;
+s21_decimal a;
+s21_decimal b;
+s21_decimal res;
+s21_decimal cs_res;
+int32_t ret;
+int32_t cs_ret;
+int null_error = 4;
+
+#suite mul
+#test-loop(0, PLACEHOLDER) iterate_file
+    memcpy(&a, buffer + _i * RECORD_SIZE_BYTES, 16);
+    memcpy(&b, buffer + _i * RECORD_SIZE_BYTES + 16, 16);
+    memcpy(&cs_ret, buffer + _i * RECORD_SIZE_BYTES + 16 * 2, 4);
+    memcpy(&cs_res, buffer + _i * RECORD_SIZE_BYTES + 16 * 2 + 4, 16);
+    ret = s21_mul(a, b, &res);
+
+    ck_assert_int_eq(ret, cs_ret);
+    if (ret == 0){
+        if (iszero(res) && iszero(cs_res)){
+            ck_assert(iszero(res) == iszero(cs_res));
+        } else {
+        ck_assert_mem_eq(&res, &cs_res, 16);
+        }
+    }
+
+
+#test null
+    a = set21(0, 1, 1, 1);
+    b = set21(0, 1, 1, 1);
+    ret = s21_mul(a, b, NULL);
+    ck_assert_int_eq(ret, 4);
+
+
+#test zero_a
+    a = set21(0, 0, 0, 0);
+    b = set21(0, 1, 1, 1);
+    ret = s21_mul(a, b, &res);
+    ck_assert_int_ne(ret, null_error);
+
+
+#test zero_a_null
+    a = set21(0, 0, 0, 0);
+    b = set21(0, 1, 1, 1);
+    ret = s21_mul(a, b, NULL);
+    ck_assert_int_eq(ret, null_error);
+
+
+#test zero_b
+    a = set21(0, 1, 1, 1);
+    b = set21(0, 0, 0, 0);
+    ret = s21_mul(a, b, &res);
+    ck_assert_int_ne(ret, null_error);
+
+
+#test zero_b_null
+    a = set21(0, 1, 1, 1);
+    b = set21(0, 0, 0, 0);
+    ret = s21_mul(a, b, NULL);
+    ck_assert_int_eq(ret, null_error);
+
+
+#test zero_a_b
+    a = set21(0, 0, 0, 0);
+    b = set21(0, 0, 0, 0);
+    ret = s21_mul(a, b, &res);
+    ck_assert_int_ne(ret, null_error);
+
+
+#test zero_a_b_null
+    a = set21(0, 0, 0, 0);
+    b = set21(0, 0, 0, 0);
+    ret = s21_mul(a, b, NULL);
+    ck_assert_int_eq(ret, null_error);
+
+
+#main-pre
+    file_ptr = fopen(FILE_PATH, "rb");
+    if (file_ptr == NULL){
+        fprintf(stderr, "tester: No such file or directory: %s\n", FILE_PATH);
+        return 1;
+    }
+    fread(buffer, BUFFER_SIZE_BYTES, 1, file_ptr);
+
+#main-post
+    fclose(file_ptr);
