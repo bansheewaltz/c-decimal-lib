@@ -22,7 +22,7 @@ int s21_mod(s21_decimal value_1, s21_decimal value_2, s21_decimal *result) {
       } else {
         for (uint16_t i = 0; i < v_1.exp - v_2.exp; ++i) bits10up(&v_2);
       }
-      if (compearbits(v_1, shiftleft(v_2, 96)) < 0) res = divremain(v_1, v_2);
+      res = divremain(v_1, v_2);
       overflow = normalize(&res);
       *result = convert2s21(res, sign);
     }

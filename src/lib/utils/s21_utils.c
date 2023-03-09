@@ -254,18 +254,33 @@ work_decimal divmain(work_decimal v_1, work_decimal v_2, work_decimal *res) {
   return v_1;
 }
 
+uint16_t maxshift(work_decimal v1, work_decimal v2) {
+  uint16_t shiftmax = 189, shiftmin = 0;
+  uint16_t shiftmid = (shiftmax + shiftmin) >> 1;
+  while (shiftmax - shiftmin > 1) {
+    int compear = compearbits(v1, shiftleft(v2, shiftmid));
+    if (compear == 1)
+      shiftmin = shiftmid;
+    else if (compear == -1)
+      shiftmax = shiftmid;
+    else {
+      shiftmax = shiftmid;
+      shiftmin = shiftmid;
+    }
+    shiftmid = (shiftmax + shiftmin) >> 1;
+  }
+  shiftmid = (compearbits(v1, shiftleft(v2, shiftmid + 1)) == 1) ? shiftmid + 1
+                                                                 : shiftmid;
+  return shiftmid;
+}
+
 work_decimal divremain(work_decimal v_1, work_decimal v_2) {
-  for (int16_t i = 2; i >= 0; --i) {
-    for (int16_t j = 31; j >= 0; --j) {
-      work_decimal foo = shiftleft(v_2, i * 32 + j);
-      int compear = compearbits(v_1, foo);
-      if (compear >= 0) {
-        v_1 = subbits(v_1, foo);
-        if (compear == 0) {
-          j = -1;
-          i = -1;
-        }
-      }
+  for (int16_t i = maxshift(v_1, v_2); i >= 0; --i) {
+    work_decimal foo = shiftleft(v_2, i);
+    int compear = compearbits(v_1, foo);
+    if (compear >= 0) {
+      v_1 = subbits(v_1, foo);
+      if (compear == 0) i = -1;
     }
   }
   return v_1;

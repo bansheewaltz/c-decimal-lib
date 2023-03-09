@@ -49,6 +49,7 @@ void sumworkbits(work_decimal *value, uint32_t index, uint64_t add1,
                  uint64_t add2, uint64_t add3);
 work_decimal shiftleft(work_decimal value, uint16_t shift);
 work_decimal divmain(work_decimal v_1, work_decimal v_2, work_decimal *res);
+uint16_t maxshift(work_decimal v1, work_decimal v2);
 work_decimal divremain(work_decimal v_1, work_decimal v_2);
 void divtail(work_decimal v_1, work_decimal v_2, work_decimal *res);
 int char2num(char c);
