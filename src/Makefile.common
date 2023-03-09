@@ -1,7 +1,7 @@
 LIBNAME := s21_decimal
 # end directories
 BUILD := build
-OUT := output
+REPORTS := reports
 # paths
 SRC := lib
 TST := testing
@@ -10,8 +10,7 @@ UTL := $(SRC)/utils
 BLD = $(BUILD)/$(CONFIG)
 OBJ = $(BLD)/obj
 BIN = $(BLD)/bin
-LIB = $(OUT)
-REPORTS := $(OUT)
+LIB := $(BUILD)/release/bin/lib
 SCRIPTS := $(TST)/scripts
 # project files
 SRCS := $(wildcard $(SRC)/*.c)
@@ -46,19 +45,17 @@ MK := mkdir -p
 dir_guard = @$(MK) $(@D)
 format_the_file = @clang-format -style=Google -i $@
 # special targets and variables
-ifneq ($(OS), Alpine)
-	MAKEFLAGS += --no-print-directory
-endif
 .SECONDARY:# keeps all intermediate files (otherwise, they are automatically deleted)
 .SUFFIXES:# cleans-up debug info
 .PHONY: all test gcov_report clean   re lib memcheck linter linter_check miniverter docker brew
 .DEFAULT_GOAL := all
+MAKEFLAGS += --no-print-directory
 export# exports environment variables to subshells and scripts
 
 
 clean_build:
 	$(RM) $(BUILD)
-	$(RM) $(OUT)/*.a
+	$(RM) $(REPORTS)
 	$(RM) *.a
 
 re: clean

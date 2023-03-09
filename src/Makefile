@@ -14,7 +14,7 @@ ifeq ($(OS), Linux)
 	$(MAKE) memcheck
 endif
 
-s21_decimal.a: $(OBJS) | $(OUT)
+s21_decimal.a: $(OBJS) | $(LIB)
 	$(MK) $(BIN)
 	ar -rsc $@ $^
 
@@ -22,24 +22,23 @@ $(OBJ)/%.o: %.c $(HDRS)
 	$(dir_guard)
 	$(CC) -c $(LDFLAGS) $(CFLAGS) $< -o $@
 
-$(OUT):
-	$(MK) $@
-
-lib: $(OUT)/libs21_decimal.a
-
-$(OUT)/libs21_decimal.a: s21_decimal.a | $(OUT)
+lib: $(LIB)/libs21_decimal.a
+$(LIB)/libs21_decimal.a: s21_decimal.a | $(LIB)
 	cp $< $@
+
+$(LIB):
+	$(MK) $@
 
 clean:
 	$(RM) $(BUILD)
-	$(RM) $(OUT)
+	$(RM) $(REPORTS)
 	$(RM) *.a
 
 test gcov_report: lib
-	$(MAKE) -f Makefile.unit_testing $@
+	@$(MAKE) -s -f Makefile.unit_testing $@
 
 memcheck: lib
 	$(MAKE) -s -f Makefile.memcheck $@
 
 miniverter: clean
-	cd $(SCRIPTS) && bash run_miniverter.sh
+	cd $(SCRIPTS) && bash run_miniverter_test.sh

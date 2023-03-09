@@ -167,14 +167,6 @@ static class Tester {
             case "mod":
               symbol = "%";
               res = a % b;
-              {
-                if (Math.Abs(a) == Decimal.MaxValue && Math.Abs(b) < 1m) {
-                  res = 0;
-                }
-                if (Math.Abs(a) == Decimal.MaxValue && Math.Abs(b) == 1m) {
-                  res = 0;
-                }
-              }
               break;
             default:
               Terminate.PrintError(Terminate.GetCurrentMethod(), op);
@@ -930,6 +922,14 @@ static class SimpleTest {
       Tuple.Create(-7m, -3m),
       Tuple.Create(18446744069414584320m, 0.00000000000000009m),
       Tuple.Create(-18446744069414584320m, 0.00000000000000009m),
+      Tuple.Create(decimal.MaxValue, 0.0000000000000000000000000001M),
+      Tuple.Create(decimal.MinValue, 0.0000000000000000000000000001M),
+      Tuple.Create(decimal.MinValue, -0.0000000000000000000000000001M),
+      Tuple.Create(decimal.MaxValue, 0.0000000000000000000000000001M),
+      Tuple.Create(decimal.MaxValue, 0.5M),
+      Tuple.Create(decimal.MaxValue, -0.5M),
+      Tuple.Create(decimal.MinValue, -0.5M),
+      Tuple.Create(decimal.MinValue, 0.5M),
     };
     decimal a, b;
     for (int i = 0; i < cases.Length; ++i) {

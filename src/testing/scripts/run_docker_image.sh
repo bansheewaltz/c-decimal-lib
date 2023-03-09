@@ -5,7 +5,7 @@ CLR="\033[38;5;117m"
 RST="\033[0m"
 
 # start docker if is not running yet
-if ! pgrep -x "Docker" >/dev/null; then
+if ! docker ps >/dev/null; then
   if [ "$OS" = 'macOS' ]; then
     echo "Starting Docker app..."
     open -a Docker
@@ -23,7 +23,7 @@ else
   image_os="$image"
 fi
 
-container_name="${image_os}_container"
+container_name="dondarri.${image_os}-${PROJNAME}"
 # run existing container or build a new one otherwise
 if [ "$(docker ps -a -q -f name=$container_name)" ]; then
   docker start -i $container_name

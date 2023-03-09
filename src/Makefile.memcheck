@@ -22,23 +22,20 @@ LDLIBS += $(shell pkg-config --libs check)
 VALGRIND_FLAGS := valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes -s
 CK_FORK=no
 # filenames specification
-MEM_REPORT_R := $(OUT)/memcheck_raw.txt
-MEM_REPORT := $(OUT)/memcheck.txt
+TST_REPORT_R := $(REPORTS)/memcheck_raw.txt
+TST_REPORT := $(REPORTS)/memcheck.txt
 export# exports environment variables to subshells and scripts
 
 # memcheck: $(MEM_REPORT_R)
 # $(MEM_REPORT_R): $(T_EXES)
 memcheck: $(T_EXES)
-	bash $(SCRIPTS)/format_memcheck.sh
-	@echo -e "\n\n" && cat $(MEM_REPORT)
-	@echo -e "\n\nCheck raw report at \"output\" folder"
+	echo -e "\n\nyou can check valgrind logs at \"src/reports\""
 
 $(BIN)/%_test:: LDFLAGS += -I $(T_INC)
-$(BIN)/%_test: $(SRC)/s21_%.c $(SRC_B)/%_test.c | $(CASES_B) $(OUT)
+$(BIN)/%_test: $(SRC)/s21_%.c $(SRC_B)/%_test.c | $(CASES_B) $(REPORTS)
 	$(dir_guard)
 	$(CC) $(LDFLAGS) $(CFLAGS) $^ $(LDLIBS) -o $@
-	(cd $(BIN) && echo && $(VALGRIND_FLAGS) ./$(@F)) 2>> $(MEM_REPORT_R)
-	# (cd $(BIN) && echo && $(VALGRIND_FLAGS) ./$(@F)) 2> >(grep "at exit")
+	(cd $(BIN) && echo && $(VALGRIND_FLAGS) ./$(@F)) 2> >(bash $(SCRIPTS)/format_memcheck.sh)
 
 $(SRC_B)/%_test.c: $(CHK_T)/%_test.check | $(CHK_B)
 	$(dir_guard)
@@ -48,7 +45,7 @@ $(SRC_B)/%_test.c: $(CHK_T)/%_test.check | $(CHK_B)
 
 $(CHK_B):
 	@$(MK) $@
-$(OUT):
+$(REPORTS):
 	@$(MK) $@
 $(CASES_B):
 	@$(MK) $@
