@@ -1,0 +1,13 @@
+{
+    "configurations": [
+        {
+            "name": "Universal",
+            "includePath": [
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/src/lib/utils"
+            ],
+            "cStandard": "c11"
+        }
+    ],
+    "version": 4
+}
