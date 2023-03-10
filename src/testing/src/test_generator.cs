@@ -21,36 +21,36 @@ static class Tester {
     // Directory.CreateDirectory(cases_txt_path);
     // ConversionSample.print();
 
-    Directory.CreateDirectory(cases_bin_path);
-    /* arithmetic operations */
-    Tester.CommutativeBinaryOpResults("add");
-    Tester.CommutativeBinaryOpResults("mul");
-    Tester.NCommutativeBinaryOpResults("sub");
-    Tester.NCommutativeBinaryOpResults("div");
+    // Directory.CreateDirectory(cases_bin_path);
+    // /* arithmetic operations */
+    // Tester.CommutativeBinaryOpResults("add");
+    // Tester.CommutativeBinaryOpResults("mul");
+    // Tester.NCommutativeBinaryOpResults("sub");
+    // Tester.NCommutativeBinaryOpResults("div");
     Tester.NCommutativeBinaryOpResults("mod");
-    /* comparison operations */
-    Tester.ComparisonOpResults("is_less");
-    Tester.ComparisonOpResults("is_less_or_equal");
-    Tester.ComparisonOpResults("is_greater");
-    Tester.ComparisonOpResults("is_greater_or_equal");
-    Tester.ComparisonOpResults("is_equal");
-    Tester.ComparisonOpResults("is_not_equal");
-    // /* convertors and parsers */
-    {
-      unary_op_cases_n = 500;
-      decimal_cases = Generator.GenerateDecimalCases();
-      int_cases = Generator.GenerateIntCases();
-      float_cases = Generator.GenerateFloatCases();
-    }
-    Tester.ConvertOpResults("from_int_to_decimal");
-    Tester.ConvertOpResults("from_float_to_decimal");
-    Tester.ConvertOpResults("from_decimal_to_int");
-    Tester.ConvertOpResults("from_decimal_to_float");
-    /* other functions */
-    Tester.UnaryOpResults("negate");
-    Tester.UnaryOpResults("truncate");
-    Tester.UnaryOpResults("round");
-    Tester.UnaryOpResults("floor");
+    // /* comparison operations */
+    // Tester.ComparisonOpResults("is_less");
+    // Tester.ComparisonOpResults("is_less_or_equal");
+    // Tester.ComparisonOpResults("is_greater");
+    // Tester.ComparisonOpResults("is_greater_or_equal");
+    // Tester.ComparisonOpResults("is_equal");
+    // Tester.ComparisonOpResults("is_not_equal");
+    // // /* convertors and parsers */
+    // {
+    unary_op_cases_n = 500;
+    decimal_cases = Generator.GenerateDecimalCases();
+    int_cases = Generator.GenerateIntCases();
+    float_cases = Generator.GenerateFloatCases();
+    // }
+    // Tester.ConvertOpResults("from_int_to_decimal");
+    // Tester.ConvertOpResults("from_float_to_decimal");
+    // Tester.ConvertOpResults("from_decimal_to_int");
+    // Tester.ConvertOpResults("from_decimal_to_float");
+    // /* other functions */
+    // Tester.UnaryOpResults("negate");
+    // Tester.UnaryOpResults("truncate");
+    // Tester.UnaryOpResults("round");
+    // Tester.UnaryOpResults("floor");
   }
   public static List<decimal> cases = new List<decimal>() {
     0m,
@@ -167,6 +167,9 @@ static class Tester {
             case "mod":
               symbol = "%";
               res = a % b;
+              if (Math.Abs(a) == Decimal.MaxValue && Math.Abs(b) == 1m) {
+                res = 0;
+              }
               break;
             default:
               Terminate.PrintError(Terminate.GetCurrentMethod(), op);
