@@ -3,7 +3,15 @@
 #include <limits.h>
 #include <stdint.h>
 
-#include "s21_decimal_struct.h"
+#if UINT_MAX > MAX2BIT
+typedef struct {
+  int bits[4];
+} s21_decimal;
+#else
+typedef struct {
+  int_fast32_t bits[4];
+} s21_decimal;
+#endif
 
 #define MAXEXP 28
 #define MAX2BIT 0xffff
