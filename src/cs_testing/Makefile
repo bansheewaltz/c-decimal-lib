@@ -1,5 +1,5 @@
 # file pointers
-LIBNAME := s21_decimal
+LIBNAME := x_decimal
 REPORT := error_report.txt
 SRCS_CS := test_suite.cs
 UTILS := ../utils.c
@@ -13,8 +13,8 @@ OBJ := obj
 EXE := build
 # project files
 SRCS := $(wildcard *.c)
-TESTSC := $(SRCS:s21_%.c=$(SRC)/%_test.c)
-TEXECS := $(SRCS:s21_%.c=$(EXE)/%_test)
+TESTSC := $(SRCS:x_%.c=$(SRC)/%_test.c)
+TEXECS := $(SRCS:x_%.c=$(EXE)/%_test)
 EXE_CS := $(SRCS_CS:%.cs=%.exe)
 # platform dependent stuff
 OS := $(shell uname -s)
@@ -52,7 +52,7 @@ test: $(TEXECS)
 	$(foreach file, $(TEXECS), ./$(file) >> error_report.txt;)
 	#code $(REPORT)
 $(EXE)/%_test: $(SRC)/%_test.c
-	gcc $(LDFLAGS) -o $@ $< s21_$*.c ../utils.c	
+	gcc $(LDFLAGS) -o $@ $< x_$*.c ../utils.c	
 $(SRC)/%.c: $(CHK)/%.check
 	checkmk clean_mode=1 $< > $@
 
@@ -62,5 +62,5 @@ testf:
 	@$(CLS)
 	@checkmk clean_mode=1 $(CHK)/$(FNAME)_test.check > $(SRC)/$(FNAME)_test.c
 	@$(MAKE) style
-	@cd $(SRC) && gcc $(LDFLAGS) -o ../$(EXE)/$(FNAME)_test ../s21_$(FNAME).c $(FNAME)_test.c ../../utils.c
+	@cd $(SRC) && gcc $(LDFLAGS) -o ../$(EXE)/$(FNAME)_test ../x_$(FNAME).c $(FNAME)_test.c ../../utils.c
 	@time $(EXE)/$(FNAME)_test

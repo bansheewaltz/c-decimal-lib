@@ -10,8 +10,8 @@
 char buffer[BUFFER_SIZE_BYTES];
 FILE* file_ptr;
 float a;
-s21_decimal res;
-s21_decimal cs_res;
+x_decimal res;
+x_decimal cs_res;
 int32_t ret;
 int32_t cs_ret;
 
@@ -20,7 +20,7 @@ int32_t cs_ret;
     memcpy(&a, buffer + _i * RECORD_SIZE_BYTES, 4);
     memcpy(&cs_res, buffer + _i * RECORD_SIZE_BYTES + 4, 16);
     memcpy(&cs_ret, buffer + _i * RECORD_SIZE_BYTES + 16 + 4, 4);
-    ret = s21_from_float_to_decimal(a, &res);
+    ret = x_from_float_to_decimal(a, &res);
 
     ck_assert_int_eq(ret, cs_ret);
     if (ret == 0){
@@ -34,7 +34,7 @@ int32_t cs_ret;
 
 #test null
     int null_error = 1;
-    ret = s21_from_float_to_decimal(a, NULL);
+    ret = x_from_float_to_decimal(a, NULL);
     ck_assert_int_eq(ret, null_error);
 
 

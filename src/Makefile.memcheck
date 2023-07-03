@@ -12,8 +12,8 @@ CASES_T := $(TST)/cases
 CASES_B := $(BLD)/bin/cases
 SCRIPTS := $(TST)/scripts
 # project files
-T_SRCS := $(SRCS:$(SRC)/s21_%.c=$(SRC_B)/%_test.c)
-T_EXES := $(SRCS:$(SRC)/s21_%.c=$(BIN)/%_test)
+T_SRCS := $(SRCS:$(SRC)/x_%.c=$(SRC_B)/%_test.c)
+T_EXES := $(SRCS:$(SRC)/x_%.c=$(BIN)/%_test)
 # compilation parameters
 CFLAGS = -g
 LDFLAGS += $(shell pkg-config --cflags check)
@@ -32,7 +32,7 @@ memcheck: $(T_EXES)
 	echo -e "\n\nyou can check valgrind logs at \"src/reports\""
 
 $(BIN)/%_test:: LDFLAGS += -I $(T_INC)
-$(BIN)/%_test: $(SRC)/s21_%.c $(SRC_B)/%_test.c | $(CASES_B) $(REPORTS)
+$(BIN)/%_test: $(SRC)/x_%.c $(SRC_B)/%_test.c | $(CASES_B) $(REPORTS)
 	$(dir_guard)
 	$(CC) $(LDFLAGS) $(CFLAGS) $^ $(LDLIBS) -o $@
 	(cd $(BIN) && echo && $(VALGRIND_FLAGS) ./$(@F)) 2> >(bash $(SCRIPTS)/format_memcheck.sh)

@@ -1,4 +1,4 @@
-LIBNAME := s21_decimal
+LIBNAME := x_decimal
 # end directories
 BUILD := build
 REPORTS := reports

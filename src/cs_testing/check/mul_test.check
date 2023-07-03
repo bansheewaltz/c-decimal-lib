@@ -8,10 +8,10 @@
 
 char buffer[BUFFER_SIZE_BYTES];
 FILE* file_ptr;
-s21_decimal a;
-s21_decimal b;
-s21_decimal res;
-s21_decimal cs_res;
+x_decimal a;
+x_decimal b;
+x_decimal res;
+x_decimal cs_res;
 int32_t ret;
 int32_t cs_ret;
 
@@ -22,7 +22,7 @@ int32_t cs_ret;
     memcpy(&b, buffer + _i * RECORD_SIZE_BYTES + 16, 16);
     memcpy(&cs_ret, buffer + _i * RECORD_SIZE_BYTES + 16 * 2, 4);
     memcpy(&cs_res, buffer + _i * RECORD_SIZE_BYTES + 16 * 2 + 4, 16);
-    ret = s21_mul(a, b, &res);
+    ret = x_mul(a, b, &res);
 
     ck_assert_int_eq(ret, cs_ret);
     if (ret == 0){

@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-int iszero(s21_decimal value) {
+int iszero(x_decimal value) {
   return value.bits[0] == 0 && value.bits[1] == 0 && value.bits[2] == 0;
 }
 
@@ -12,13 +12,13 @@ int iszerow(work_decimal value) {
   return res;
 }
 
-int isminus(s21_decimal value) { return (value.bits[3] & MINUS) == MINUS; }
+int isminus(x_decimal value) { return (value.bits[3] & MINUS) == MINUS; }
 
-void setminus(s21_decimal *value) { value->bits[3] |= MINUS; }
+void setminus(x_decimal *value) { value->bits[3] |= MINUS; }
 
-void setplus(s21_decimal *value) { value->bits[3] &= NOTMINUS; }
+void setplus(x_decimal *value) { value->bits[3] &= NOTMINUS; }
 
-work_decimal convert2work(s21_decimal value) {
+work_decimal convert2work(x_decimal value) {
   work_decimal result;
   for (uint16_t i = 0; i < 3; ++i)
     result.bits[i] = bitwithoutover(value.bits[i]);
@@ -27,8 +27,8 @@ work_decimal convert2work(s21_decimal value) {
   return result;
 }
 
-s21_decimal convert2s21(work_decimal value, int sign) {
-  s21_decimal result;
+x_decimal convert2s21(work_decimal value, int sign) {
+  x_decimal result;
   for (uint16_t i = 0; i < 3; ++i)
     result.bits[i] = bitwithoutover(value.bits[i]);
   result.bits[3] = (value.exp << 16) | ((sign) ? MINUS : 0);
@@ -365,8 +365,8 @@ int checkoverflowmult(work_decimal res) {
 
 int char2num(char c) { return c - '0'; }
 
-s21_decimal set21(int bits3, int bits2, int bits1, int bits0) {
-  s21_decimal value;
+x_decimal set21(int bits3, int bits2, int bits1, int bits0) {
+  x_decimal value;
   value.bits[0] = bits0 & MAX4BIT;
   value.bits[1] = bits1 & MAX4BIT;
   value.bits[2] = bits2 & MAX4BIT;
@@ -381,7 +381,7 @@ work_decimal initwork() {
   return value;
 }
 
-void print_s21(s21_decimal value, int type) {
+void print_s21(x_decimal value, int type) {
   printf("%x ", value.bits[3]);
   if (type == 0)
     for (int16_t i = 2; i >= 0; --i) printf("%x ", value.bits[i]);

@@ -14,7 +14,7 @@ ifeq ($(OS), Linux)
 	$(MAKE) memcheck
 endif
 
-s21_decimal.a: $(OBJS) | $(LIB)
+x_decimal.a: $(OBJS) | $(LIB)
 	$(MK) $(BIN)
 	ar -rsc $@ $^
 
@@ -22,8 +22,8 @@ $(OBJ)/%.o: %.c $(HDRS)
 	$(dir_guard)
 	$(CC) -c $(LDFLAGS) $(CFLAGS) $< -o $@
 
-lib: $(LIB)/libs21_decimal.a
-$(LIB)/libs21_decimal.a: s21_decimal.a | $(LIB)
+lib: $(LIB)/libx_decimal.a
+$(LIB)/libx_decimal.a: x_decimal.a | $(LIB)
 	cp $< $@
 
 $(LIB):

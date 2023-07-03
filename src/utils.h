@@ -1,7 +1,7 @@
-#ifndef S21_UTILS_H
-#define S21_UTILS_H
+#ifndef x_UTILS_H
+#define x_UTILS_H
 
-#include "s21_decimal.h"
+#include "x_decimal.h"
 
 #define MAX4BIT 0xffffffff
 #define MINUS 0x80000000
@@ -14,17 +14,17 @@ typedef struct {
 } work_decimal;
 
 // если value равно 0, возвращает 1
-int iszero(s21_decimal value);
+int iszero(x_decimal value);
 int iszerow(work_decimal value);
 // если value отрицательное, возвращает 1
-int isminus(s21_decimal value);
+int isminus(x_decimal value);
 // делает устанавливает знак value
-void setminus(s21_decimal *value);
-void setplus(s21_decimal *value);
+void setminus(x_decimal *value);
+void setplus(x_decimal *value);
 
 // конвертирует обычный децимал в рабочий и наоборот
-work_decimal convert2work(s21_decimal value);
-s21_decimal convert2s21(work_decimal value, int sign);
+work_decimal convert2work(x_decimal value);
+x_decimal convert2s21(work_decimal value, int sign);
 
 // выдаёт переполнение (все биты начиная с 32)
 uint64_t getoverflow(uint64_t bit);
@@ -98,16 +98,16 @@ void divtail(work_decimal v_1, work_decimal v_2, work_decimal *res);
 int char2num(char c);
 
 // возвращает децимал, записывая значения битов
-s21_decimal set21(int bits3, int bits2, int bits1, int bits0);
+x_decimal set21(int bits3, int bits2, int bits1, int bits0);
 // возвращает рабочий децимал заполненый нулями
 work_decimal initwork();
 
 // НИЖЕ ФУНКЦИИ ДЛЯ ТЕСТИРОВАНИЯ ПЕРЕД СДАЧЕЙ БУДУТ УДАЛЕНЫ
 // печатет децимал. bits[3] всегда в hex,
 // остальные при type = 0 в hex, иначе десятичный
-void print_s21(s21_decimal value, int type);
+void print_s21(x_decimal value, int type);
 // печатет рабочий децимал. степень в деятичном (в скобках hex),
 // биты при type = 0 в hex, иначе десятичный
 void print_work(work_decimal value, int type);
 
-#endif  // S21_UTILS_H
+#endif  // x_UTILS_H
