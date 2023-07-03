@@ -1,9 +1,12 @@
 .vscode
-.DS_Store
-**/*.a
 src/build
-tmp.mk
-tmp
+src/reports
+**/*.a
+**/*.out
+**/*.gcda
+**/*.gcno
+**/*.dSYM
+**/*.DS_Store
 
 # Prerequisites
 *.d
