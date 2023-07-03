@@ -1,0 +1,58 @@
+Running suite(s): add
+100%: Checks: 332, Failures: 0, Errors: 0
+
+Running suite(s): div
+100%: Checks: 626, Failures: 0, Errors: 0
+
+Running suite(s): floor
+100%: Checks: 501, Failures: 0, Errors: 0
+
+Running suite(s): from_decimal_to_float
+100%: Checks: 501, Failures: 0, Errors: 0
+
+Running suite(s): from_decimal_to_int
+100%: Checks: 501, Failures: 0, Errors: 0
+
+Running suite(s): from_float_to_decimal
+100%: Checks: 501, Failures: 0, Errors: 0
+
+Running suite(s): from_int_to_decimal
+100%: Checks: 501, Failures: 0, Errors: 0
+
+Running suite(s): is_equal
+100%: Checks: 625, Failures: 0, Errors: 0
+
+Running suite(s): is_greater
+100%: Checks: 625, Failures: 0, Errors: 0
+
+Running suite(s): is_greater_or_equal
+100%: Checks: 625, Failures: 0, Errors: 0
+
+Running suite(s): is_less
+100%: Checks: 625, Failures: 0, Errors: 0
+
+Running suite(s): is_less_or_equal
+100%: Checks: 625, Failures: 0, Errors: 0
+
+Running suite(s): is_not_equal
+100%: Checks: 625, Failures: 0, Errors: 0
+
+Running suite(s): mod
+100%: Checks: 626, Failures: 0, Errors: 0
+
+Running suite(s): mul
+100%: Checks: 332, Failures: 0, Errors: 0
+
+Running suite(s): negate
+100%: Checks: 501, Failures: 0, Errors: 0
+
+Running suite(s): round
+100%: Checks: 501, Failures: 0, Errors: 0
+
+Running suite(s): sub
+100%: Checks: 626, Failures: 0, Errors: 0
+
+Running suite(s): truncate
+100%: Checks: 501, Failures: 0, Errors: 0
+
+=================================================================================================

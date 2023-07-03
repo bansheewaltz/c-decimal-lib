@@ -1,5 +1,10 @@
 .vscode
 .DS_Store
+**/*.a
+src/build
+tmp.mk
+tmp
+
 # Prerequisites
 *.d
 
