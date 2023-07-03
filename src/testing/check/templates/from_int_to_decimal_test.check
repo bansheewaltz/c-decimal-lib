@@ -1,0 +1,46 @@
+#include "tests_includes.h"
+
+/* changable variables */
+#define FILE_PATH "cases/from_int_to_decimal.bin"
+#define NUMBER_OF_TESTS PLACEHOLDER
+#define RECORD_SIZE_BYTES (4 + 16 + 4)
+#define BUFFER_SIZE_BYTES (RECORD_SIZE_BYTES * NUMBER_OF_TESTS)
+
+
+char buffer[BUFFER_SIZE_BYTES];
+FILE* file_ptr;
+int arg;
+s21_decimal res;
+s21_decimal cs_res;
+int32_t ret;
+int32_t cs_ret;
+
+#suite from_int_to_decimal
+#test-loop(0, PLACEHOLDER) iterate_file
+    memcpy(&arg, buffer + _i * RECORD_SIZE_BYTES, 4);
+    memcpy(&cs_res, buffer + _i * RECORD_SIZE_BYTES + 4, 16);
+    memcpy(&cs_ret, buffer + _i * RECORD_SIZE_BYTES + 16 + 4, 4);
+    ret = s21_from_int_to_decimal(arg, &res);
+
+    ck_assert_int_eq(ret, cs_ret);
+    if (ret == 0){
+        ck_assert_mem_eq(&res, &cs_res, DEC_IN_BYTES);
+    }
+
+
+#test null
+    int null_error = 1;
+    ret = s21_from_int_to_decimal(arg, NULL);
+    ck_assert_int_eq(ret, null_error);
+
+
+#main-pre
+    file_ptr = fopen(FILE_PATH, "rb");
+    if (file_ptr == NULL){
+        fprintf(stderr, "tester: No such file or directory: %s\n", FILE_PATH);
+        return 1;
+    }
+    fread(buffer, BUFFER_SIZE_BYTES, 1, file_ptr);
+
+#main-post
+    fclose(file_ptr);

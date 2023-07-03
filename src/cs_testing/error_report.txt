@@ -1,0 +1,95 @@
+Running suite(s): div
+95%: Checks: 624, Failures: 28, Errors: 0
+src/div_test.c:36:F:div:iterate_file:198: Assertion '&res == &cs_res' failed: &res == "01000000000000000000000000001c00", &cs_res == "00000000000000000000000000000000"
+src/div_test.c:36:F:div:iterate_file:199: Assertion '&res == &cs_res' failed: &res == "01000000000000000000000000001c80", &cs_res == "00000000000000000000000000000080"
+src/div_test.c:36:F:div:iterate_file:223: Assertion '&res == &cs_res' failed: &res == "01000000000000000000000000001c80", &cs_res == "00000000000000000000000000000080"
+src/div_test.c:36:F:div:iterate_file:224: Assertion '&res == &cs_res' failed: &res == "01000000000000000000000000001c00", &cs_res == "00000000000000000000000000000000"
+src/div_test.c:36:F:div:iterate_file:248: Assertion '&res == &cs_res' failed: &res == "09000000000000000000000000001c00", &cs_res == "00000000000000000000000000000000"
+src/div_test.c:36:F:div:iterate_file:249: Assertion '&res == &cs_res' failed: &res == "09000000000000000000000000001c80", &cs_res == "00000000000000000000000000000080"
+src/div_test.c:36:F:div:iterate_file:273: Assertion '&res == &cs_res' failed: &res == "09000000000000000000000000001c80", &cs_res == "00000000000000000000000000000080"
+src/div_test.c:36:F:div:iterate_file:274: Assertion '&res == &cs_res' failed: &res == "09000000000000000000000000001c00", &cs_res == "00000000000000000000000000000000"
+src/div_test.c:36:F:div:iterate_file:298: Assertion '&res == &cs_res' failed: &res == "09000000000000000000000000001c00", &cs_res == "00000000000000000000000000000000"
+src/div_test.c:36:F:div:iterate_file:299: Assertion '&res == &cs_res' failed: &res == "09000000000000000000000000001c80", &cs_res == "00000000000000000000000000000080"
+src/div_test.c:36:F:div:iterate_file:323: Assertion '&res == &cs_res' failed: &res == "09000000000000000000000000001c80", &cs_res == "00000000000000000000000000000080"
+src/div_test.c:36:F:div:iterate_file:324: Assertion '&res == &cs_res' failed: &res == "09000000000000000000000000001c00", &cs_res == "00000000000000000000000000000000"
+src/div_test.c:36:F:div:iterate_file:348: Assertion '&res == &cs_res' failed: &res == "01000000000000000000000000001c00", &cs_res == "00000000000000000000000000000000"
+src/div_test.c:36:F:div:iterate_file:349: Assertion '&res == &cs_res' failed: &res == "01000000000000000000000000001c80", &cs_res == "00000000000000000000000000000080"
+src/div_test.c:36:F:div:iterate_file:373: Assertion '&res == &cs_res' failed: &res == "01000000000000000000000000001c80", &cs_res == "00000000000000000000000000000080"
+src/div_test.c:36:F:div:iterate_file:374: Assertion '&res == &cs_res' failed: &res == "01000000000000000000000000001c00", &cs_res == "00000000000000000000000000000000"
+src/div_test.c:36:F:div:iterate_file:398: Assertion '&res == &cs_res' failed: &res == "09000000000000000000000000001c00", &cs_res == "00000000000000000000000000000000"
+src/div_test.c:36:F:div:iterate_file:399: Assertion '&res == &cs_res' failed: &res == "09000000000000000000000000001c80", &cs_res == "00000000000000000000000000000080"
+src/div_test.c:36:F:div:iterate_file:423: Assertion '&res == &cs_res' failed: &res == "09000000000000000000000000001c80", &cs_res == "00000000000000000000000000000080"
+src/div_test.c:36:F:div:iterate_file:424: Assertion '&res == &cs_res' failed: &res == "09000000000000000000000000001c00", &cs_res == "00000000000000000000000000000000"
+src/div_test.c:36:F:div:iterate_file:448: Assertion '&res == &cs_res' failed: &res == "09000000000000000000000000001c00", &cs_res == "00000000000000000000000000000000"
+src/div_test.c:36:F:div:iterate_file:449: Assertion '&res == &cs_res' failed: &res == "09000000000000000000000000001c80", &cs_res == "00000000000000000000000000000080"
+src/div_test.c:36:F:div:iterate_file:473: Assertion '&res == &cs_res' failed: &res == "09000000000000000000000000001c80", &cs_res == "00000000000000000000000000000080"
+src/div_test.c:36:F:div:iterate_file:474: Assertion '&res == &cs_res' failed: &res == "09000000000000000000000000001c00", &cs_res == "00000000000000000000000000000000"
+src/div_test.c:36:F:div:iterate_file:548: Assertion '&res == &cs_res' failed: &res == "59000000000000000000000000001c00", &cs_res == "01000000000000000000000000001c00"
+src/div_test.c:36:F:div:iterate_file:549: Assertion '&res == &cs_res' failed: &res == "59000000000000000000000000001c80", &cs_res == "01000000000000000000000000001c80"
+src/div_test.c:36:F:div:iterate_file:573: Assertion '&res == &cs_res' failed: &res == "59000000000000000000000000001c80", &cs_res == "01000000000000000000000000001c80"
+src/div_test.c:36:F:div:iterate_file:574: Assertion '&res == &cs_res' failed: &res == "59000000000000000000000000001c00", &cs_res == "01000000000000000000000000001c00"
+Running suite(s): from_decimal_to_float
+100%: Checks: 201, Failures: 0, Errors: 0
+Running suite(s): from_float_to_decimal
+86%: Checks: 200, Failures: 28, Errors: 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:7: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:12: Assertion 'ret == cs_ret' failed: ret == 0, cs_ret == 1
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:17: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:26: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:30: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:41: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:53: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:77: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:78: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:81: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:88: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:91: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:104: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:106: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:117: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:119: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:120: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:125: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:135: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:138: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:149: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:158: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:160: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:167: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:176: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:178: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:187: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+src/from_float_to_decimal_test.c:32:F:from_float_to_decimal:iterate_file:197: Assertion 'ret == cs_ret' failed: ret == 1, cs_ret == 0
+Running suite(s): mul
+91%: Checks: 324, Failures: 29, Errors: 0
+src/mul_test.c:39:F:mul:iterate_file:37: Assertion '&res == &cs_res' failed: &res == "2fbae83a4a3a3077befd770100001c00", &cs_res == "2ebae83a4a3a3077befd770100001c00"
+src/mul_test.c:39:F:mul:iterate_file:38: Assertion '&res == &cs_res' failed: &res == "2fbae83a4a3a3077befd770100001c80", &cs_res == "2ebae83a4a3a3077befd770100001c80"
+src/mul_test.c:39:F:mul:iterate_file:45: Assertion '&res == &cs_res' failed: &res == "99999999999999999999991900001c00", &cs_res == "9a999999999999999999991900001c00"
+src/mul_test.c:39:F:mul:iterate_file:46: Assertion '&res == &cs_res' failed: &res == "99999999999999999999991900001c80", &cs_res == "9a999999999999999999991900001c80"
+src/mul_test.c:39:F:mul:iterate_file:60: Assertion '&res == &cs_res' failed: &res == "2fbae83a4a3a3077befd770100001c80", &cs_res == "2ebae83a4a3a3077befd770100001c80"
+src/mul_test.c:39:F:mul:iterate_file:61: Assertion '&res == &cs_res' failed: &res == "2fbae83a4a3a3077befd770100001c00", &cs_res == "2ebae83a4a3a3077befd770100001c00"
+src/mul_test.c:39:F:mul:iterate_file:68: Assertion '&res == &cs_res' failed: &res == "99999999999999999999991900001c80", &cs_res == "9a999999999999999999991900001c80"
+src/mul_test.c:39:F:mul:iterate_file:69: Assertion '&res == &cs_res' failed: &res == "99999999999999999999991900001c00", &cs_res == "9a999999999999999999991900001c00"
+src/mul_test.c:39:F:mul:iterate_file:255: Assertion '&res == &cs_res' failed: &res == "c5c493590f5d74d145175d7400001c00", &cs_res == "5974d145175d74d145175d7400001c00"
+src/mul_test.c:39:F:mul:iterate_file:256: Assertion '&res == &cs_res' failed: &res == "c5c493590f5d74d145175d7400001c80", &cs_res == "5974d145175d74d145175d7400001c80"
+src/mul_test.c:39:F:mul:iterate_file:257: Assertion '&res == &cs_res' failed: &res == "c5c493590f5d74d145175d7400000000", &cs_res == "5974d145175d74d145175d7400000000"
+src/mul_test.c:39:F:mul:iterate_file:258: Assertion '&res == &cs_res' failed: &res == "c5c493590f5d74d145175d7400000080", &cs_res == "5974d145175d74d145175d7400000080"
+src/mul_test.c:39:F:mul:iterate_file:266: Assertion '&res == &cs_res' failed: &res == "c5c493590f5d74d145175d7400001c80", &cs_res == "5974d145175d74d145175d7400001c80"
+src/mul_test.c:39:F:mul:iterate_file:267: Assertion '&res == &cs_res' failed: &res == "c5c493590f5d74d145175d7400001c00", &cs_res == "5974d145175d74d145175d7400001c00"
+src/mul_test.c:39:F:mul:iterate_file:268: Assertion '&res == &cs_res' failed: &res == "c5c493590f5d74d145175d7400000080", &cs_res == "5974d145175d74d145175d7400000080"
+src/mul_test.c:39:F:mul:iterate_file:269: Assertion '&res == &cs_res' failed: &res == "c5c493590f5d74d145175d7400000000", &cs_res == "5974d145175d74d145175d7400000000"
+src/mul_test.c:34:F:mul:iterate_file:278: Assertion 'ret == cs_ret' failed: ret == 0, cs_ret == 1
+src/mul_test.c:34:F:mul:iterate_file:279: Assertion 'ret == cs_ret' failed: ret == 0, cs_ret == 2
+src/mul_test.c:34:F:mul:iterate_file:287: Assertion 'ret == cs_ret' failed: ret == 0, cs_ret == 2
+src/mul_test.c:34:F:mul:iterate_file:288: Assertion 'ret == cs_ret' failed: ret == 0, cs_ret == 1
+src/mul_test.c:39:F:mul:iterate_file:315: Assertion '&res == &cs_res' failed: &res == "2db92e3e4743c76af4f7d2ca00001b00", &cs_res == "6fb02434869fc2ebfe4b481400001a00"
+src/mul_test.c:39:F:mul:iterate_file:316: Assertion '&res == &cs_res' failed: &res == "2db92e3e4743c76af4f7d2ca00001b80", &cs_res == "6fb02434869fc2ebfe4b481400001a80"
+src/mul_test.c:34:F:mul:iterate_file:317: Assertion 'ret == cs_ret' failed: ret == 0, cs_ret == 1
+src/mul_test.c:34:F:mul:iterate_file:318: Assertion 'ret == cs_ret' failed: ret == 0, cs_ret == 2
+src/mul_test.c:39:F:mul:iterate_file:319: Assertion '&res == &cs_res' failed: &res == "2db92e3e4743c76af4f7d2ca00001b00", &cs_res == "6fb02434869fc2ebfe4b481400001a00"
+src/mul_test.c:34:F:mul:iterate_file:320: Assertion 'ret == cs_ret' failed: ret == 0, cs_ret == 2
+src/mul_test.c:34:F:mul:iterate_file:321: Assertion 'ret == cs_ret' failed: ret == 0, cs_ret == 1
+src/mul_test.c:34:F:mul:iterate_file:322: Assertion 'ret == cs_ret' failed: ret == 0, cs_ret == 1
+src/mul_test.c:34:F:mul:iterate_file:323: Assertion 'ret == cs_ret' failed: ret == 0, cs_ret == 2
+Running suite(s): negate
+100%: Checks: 200, Failures: 0, Errors: 0
